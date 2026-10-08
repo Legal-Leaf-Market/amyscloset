@@ -132,6 +132,18 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 .shop-card .go { font: 500 0.85rem/1 var(--mono); color: var(--thread); letter-spacing: 0.06em; }
 .shop-card p { color: var(--ink-soft); font-size: 0.98rem; }
 
+
+/* Rack: product grid */
+.rack { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 20px; margin-bottom: 40px; }
+.item { display: grid; grid-template-rows: auto 1fr; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; min-width: 0; }
+.item img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: var(--line); }
+.item-body { display: grid; gap: 6px; padding: 14px 16px 16px; align-content: start; }
+.item h3 { font-size: 1.05rem; }
+.item .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font: 500 0.85rem/1.3 var(--mono); color: var(--ink-soft); }
+.item .price { font: 400 1.25rem/1 var(--display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.item .buy { justify-self: start; margin-top: 6px; font: 600 0.9rem/1 var(--body); color: var(--thread); text-decoration: none; }
+.item .buy:hover { text-decoration: underline; text-underline-offset: 4px; }
+
 /* Love Chapel */
 .chapel { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 32px; align-items: center; }
 .pct { font: 400 clamp(4.5rem, 14vw, 8rem)/0.9 var(--display); color: var(--thread); }
@@ -168,7 +180,7 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
   <main id="top">
     <section class="hero">
       <div>
-        <span class="eyebrow">Donated clothes · Second chances · Columbus, Indiana</span>
+        <span class="eyebrow">Clothing thrift shop · Donated clothes · Columbus, Indiana</span>
         <h1>Your closet clean-out feeds a neighbor.</h1>
         <p class="lede">Amy's Closet resells donated clothing. Every piece is inspected three times before it reaches the rack, and 10% of every sale goes to Love Chapel, a food pantry in Columbus, Indiana.</p>
         <div class="ctas">
@@ -265,14 +277,56 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
     <section class="block" id="shop">
       <div class="head">
         <span class="eyebrow">Shop</span>
-        <h2>New pieces go up every week</h2>
-        <p class="lede">Browse what's in the closet right now, and follow along so you see new arrivals first.</p>
+        <h2>Fresh on the rack</h2>
+        <p class="lede">A few pieces from this week. New donations are inspected and hung every week, so follow along to catch them first.</p>
+      </div>
+      <div class="rack" aria-label="Fresh on the rack">
+        <article class="item">
+          <img src="images/products/ghost-face-sweatshirt.jpg" alt="Ghost Face graphic crewneck sweatshirt" loading="lazy" width="720" height="960">
+          <div class="item-body">
+            <h3>Ghost Face graphic crewneck sweatshirt</h3>
+            <div class="meta"><span>Faded black</span><span class="price">Ask us</span></div>
+            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
+          </div>
+        </article>
+        <article class="item">
+          <img src="images/products/diamondback-kings-island-tee.jpg" alt="Diamondback Kings Island coaster tee" loading="lazy" width="720" height="960">
+          <div class="item-body">
+            <h3>Diamondback Kings Island coaster tee</h3>
+            <div class="meta"><span>Navy</span><span class="price">Ask us</span></div>
+            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
+          </div>
+        </article>
+        <article class="item">
+          <img src="images/products/red-bird-cardigan.jpg" alt="Natural Impressions cardigan with embroidered tree and birds" loading="lazy" width="720" height="960">
+          <div class="item-body">
+            <h3>Natural Impressions cardigan with embroidered tree and birds</h3>
+            <div class="meta"><span>Size M</span><span class="price">$5.99</span></div>
+            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
+          </div>
+        </article>
+        <article class="item">
+          <img src="images/products/purple-cap-sleeve-blouse.jpg" alt="Purple cap-sleeve blouse" loading="lazy" width="720" height="960">
+          <div class="item-body">
+            <h3>Purple cap-sleeve blouse</h3>
+            <div class="meta"><span>Size M</span><span class="price">$4.99</span></div>
+            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
+          </div>
+        </article>
+        <article class="item">
+          <img src="images/products/pink-lace-cami.jpg" alt="Pink cami with lace trim" loading="lazy" width="720" height="960">
+          <div class="item-body">
+            <h3>Pink cami with lace trim</h3>
+            <div class="meta"><span>Size M</span><span class="price">$3.99</span></div>
+            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
+          </div>
+        </article>
       </div>
       <div class="shop-links">
         <a class="shop-card js-store" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">
           <span class="go">SHOP ONLINE →</span>
           <h3>Shop our full closet</h3>
-          <p>See every available item with its size, price and photos. Checkout and shipping are handled securely by the marketplace.</p>
+          <p>See every available item with its size, price and photos. Pay securely online or pick up in the store.</p>
         </a>
         <a class="shop-card js-facebook" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">
           <span class="go">FACEBOOK →</span>
@@ -310,9 +364,9 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
   // ===== EDIT THESE LINKS =====
   // Paste the real URLs once each account exists. Leave a value blank to keep the default.
   var LINKS = {
-    facebook:  "",  // e.g. https://www.facebook.com/amyscloset
+    facebook:  "https://www.facebook.com/profile.php?id=100091049706849",
     instagram: "",  // e.g. https://www.instagram.com/amyscloset
-    store:     ""   // Vinted closet URL, e.g. https://www.vinted.com/member/12345678
+    store:     ""   // online store link once it exists
   };
   // ============================
   (function () {
