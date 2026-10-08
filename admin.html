@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Amy's Closet Lister</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow column built for a phone at the shop counter. Add an item on top, the rack below, settings tucked away. */
+:root {
+  --paper: #f4f5f7; --card: #ffffff; --ink: #1d2740; --ink-soft: #4b5672; --line: #d9dde6;
+  --thread: #c9881c; --thread-ink: #ffffff; --ok: #2f7d4f; --bad: #b3362b;
+  --display: "Young Serif", Georgia, serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "DM Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121725; --card: #1a2133; --ink: #e8ecf5; --ink-soft: #a7b0c6; --line: #2c3550;
+    --thread: #e2a73f; --thread-ink: #1a1405; --ok: #6cc28f; --bad: #f08a7f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121725; --card: #1a2133; --ink: #e8ecf5; --ink-soft: #a7b0c6; --line: #2c3550;
+  --thread: #e2a73f; --thread-ink: #1a1405; --ok: #6cc28f; --bad: #f08a7f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1rem/1.55 var(--body); padding-inline: 16px; }
+main { max-width: 640px; margin-inline: auto; padding-block: 24px 64px; display: grid; gap: 28px; }
+h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; line-height: 1.2; }
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.35rem; }
+.sub { color: var(--ink-soft); margin: 4px 0 0; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 16px; }
+label { display: grid; gap: 6px; font-weight: 600; font-size: 0.95rem; }
+.hint { font-weight: 400; color: var(--ink-soft); font-size: 0.85rem; }
+input[type=text], input[type=url], input[type=password], input[type=number], textarea {
+  width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+}
+textarea { min-height: 110px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--thread); outline-offset: 2px; }
+.row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.checks { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.checks label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+button { font: 600 1rem/1 var(--body); border-radius: 999px; padding: 13px 20px; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); cursor: pointer; }
+button.ghost { background: transparent; color: var(--ink); padding: 8px 14px; font-size: 0.9rem; }
+button:disabled { opacity: 0.5; cursor: wait; }
+.preview { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: start; }
+.preview img { width: 96px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 8px; background: var(--line); }
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font: 400 0.88rem/1.45 var(--mono); }
+.log .ok { color: var(--ok); } .log .bad { color: var(--bad); } .log .info { color: var(--ink-soft); }
+.items { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.items li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.items img { width: 64px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; background: var(--line); }
+.items .info { display: grid; gap: 6px; min-width: 0; }
+.items .name { font-weight: 600; overflow-wrap: anywhere; }
+.items .meta { font: 400 0.85rem/1.3 var(--mono); color: var(--ink-soft); }
+.items .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; border: 1px solid currentColor; }
+.badge.sold { color: var(--bad); } .badge.nolink { color: var(--thread); }
+details summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: 14px; }
+details .panel-inner { display: grid; gap: 14px; }
+a { color: inherit; }
+@media (max-width: 460px) { .row { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Amy's Closet Lister</h1>
+    <p class="sub">List it on Depop first, then add it here. It goes on the website and, if you like, posts to Facebook and Instagram.</p>
+  </header>
+
+  <form class="panel" id="add-form" autocomplete="off">
+    <h2>Add an item</h2>
+    <label>Photo
+      <input type="file" id="f-photo" accept="image/*" required>
+    </label>
+    <div class="preview" id="preview" hidden>
+      <img id="preview-img" alt="Selected photo">
+      <span class="hint">The photo is resized before upload, so phone pictures are fine.</span>
+    </div>
+    <label>Item name
+      <input type="text" id="f-name" placeholder="Red cardigan with embroidered birds" required>
+    </label>
+    <div class="row">
+      <label>Size <input type="text" id="f-size" placeholder="M"></label>
+      <label>Price ($) <input type="number" id="f-price" step="0.01" min="0" placeholder="5.99"></label>
+    </div>
+    <label>Depop link
+      <input type="url" id="f-depop" placeholder="https://www.depop.com/products/...">
+      <span class="hint">On Depop, open the listing, tap Share, then Copy link. Leave blank and the button says "Message to buy" instead.</span>
+    </label>
+    <div class="checks">
+      <label><input type="checkbox" id="f-fb"> Post to Facebook</label>
+      <label><input type="checkbox" id="f-ig"> Post to Instagram</label>
+    </div>
+    <label>Post caption
+      <textarea id="f-caption"></textarea>
+      <span class="hint">Filled in for you. Edit it however you like.</span>
+    </label>
+    <button type="submit" id="add-btn">List it</button>
+    <ul class="log" id="log" aria-live="polite"></ul>
+  </form>
+
+  <section class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <h2>On the rack</h2>
+      <button class="ghost" type="button" id="refresh-btn">Refresh</button>
+    </div>
+    <ul class="items" id="items"><li class="hint" style="display:block;border:0">Add your GitHub key in Settings to see items.</li></ul>
+  </section>
+
+  <details class="panel" id="settings">
+    <summary>Settings</summary>
+    <div class="panel-inner">
+      <p class="hint">These stay saved on this device only. Setup steps are in SETUP.md.</p>
+      <label>GitHub key <span class="hint">A fine-grained token with "Contents: read and write" on this repo.</span>
+        <input type="password" id="s-token">
+      </label>
+      <div class="row">
+        <label>Repo <input type="text" id="s-repo"></label>
+        <label>Branch <input type="text" id="s-branch"></label>
+      </div>
+      <label>Website address <span class="hint">Instagram fetches the photo from here.</span>
+        <input type="url" id="s-site">
+      </label>
+      <label>Facebook Page ID <input type="text" id="s-page"></label>
+      <label>Facebook Page access token <input type="password" id="s-pagetoken"></label>
+      <label>Instagram account ID <input type="text" id="s-ig"></label>
+      <button type="button" id="save-btn">Save settings</button>
+    </div>
+  </details>
+</main>
+
+<script>
+(function () {
+  var GRAPH = "https://graph.facebook.com/v23.0";
+  var DEFAULTS = {
+    token: "", repo: "Legal-Leaf-Market/amyscloset", branch: "claude/focused-bardeen-bipxim",
+    site: "https://legal-leaf-market.github.io/amyscloset/", page: "", pagetoken: "", ig: ""
+  };
+  var KEYS = Object.keys(DEFAULTS);
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---------- settings ----------
+  function load() {
+    var s = Object.assign({}, DEFAULTS);
+    try { Object.assign(s, JSON.parse(localStorage.getItem("ac-settings") || "{}")); } catch (e) {}
+    return s;
+  }
+  var S = load();
+  KEYS.forEach(function (k) { $("s-" + k).value = S[k]; });
+  if (!S.token) $("settings").open = true;
+  $("save-btn").addEventListener("click", function () {
+    KEYS.forEach(function (k) { S[k] = $("s-" + k).value.trim(); });
+    if (S.site && !/\/$/.test(S.site)) S.site += "/";
+    try { localStorage.setItem("ac-settings", JSON.stringify(S)); } catch (e) {}
+    $("save-btn").textContent = "Saved";
+    setTimeout(function () { $("save-btn").textContent = "Save settings"; }, 1500);
+    refresh();
+  });
+
+  // ---------- log ----------
+  function log(msg, kind) {
+    var li = document.createElement("li");
+    li.className = kind || "info"; li.textContent = msg; $("log").appendChild(li);
+  }
+
+  // ---------- GitHub ----------
+  function b64(str) { return btoa(unescape(encodeURIComponent(str))); }
+  function unb64(str) { return decodeURIComponent(escape(atob(str.replace(/\n/g, "")))); }
+  function gh(path, opts) {
+    opts = opts || {};
+    return fetch("https://api.github.com/repos/" + S.repo + "/contents/" + path + (opts.method ? "" : "?ref=" + encodeURIComponent(S.branch)), {
+      method: opts.method || "GET",
+      headers: { "Authorization": "Bearer " + S.token, "Accept": "application/vnd.github+json" },
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    }).then(function (r) {
+      return r.json().then(function (j) {
+        if (!r.ok) throw new Error("GitHub said: " + (j.message || r.status) + (r.status === 401 ? ". Check the GitHub key in Settings." : ""));
+        return j;
+      });
+    });
+  }
+  function getProducts() {
+    return gh("products.json").then(function (j) { return { sha: j.sha, items: JSON.parse(unb64(j.content)) }; });
+  }
+  function saveProducts(items, sha, message) {
+    return gh("products.json", { method: "PUT", body: {
+      message: message, branch: S.branch, sha: sha, content: b64(JSON.stringify(items, null, 2) + "\n")
+    }});
+  }
+  // Re-read before every write so two phones editing at once don't clobber each other.
+  function updateProducts(change, message) {
+    return getProducts().then(function (p) { change(p.items); return saveProducts(p.items, p.sha, message); });
+  }
+
+  // ---------- photo ----------
+  var photoBlob = null;
+  function resize(file) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, 1066 / Math.max(img.width, img.height));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (b) { b ? resolve(b) : reject(new Error("Couldn't read that photo.")); }, "image/jpeg", 0.82);
+        URL.revokeObjectURL(img.src);
+      };
+      img.onerror = function () { reject(new Error("Couldn't read that photo. Try a JPG or PNG.")); };
+      img.src = URL.createObjectURL(file);
+    });
+  }
+  function blobToB64(blob) {
+    return new Promise(function (resolve) {
+      var r = new FileReader();
+      r.onload = function () { resolve(String(r.result).split(",")[1]); };
+      r.readAsDataURL(blob);
+    });
+  }
+  $("f-photo").addEventListener("change", function () {
+    var f = this.files[0]; if (!f) return;
+    resize(f).then(function (b) {
+      photoBlob = b; $("preview-img").src = URL.createObjectURL(b); $("preview").hidden = false;
+    }).catch(function (e) { log(e.message, "bad"); });
+  });
+
+  // ---------- caption ----------
+  var captionTouched = false;
+  $("f-caption").addEventListener("input", function () { captionTouched = true; });
+  function buildCaption() {
+    var name = $("f-name").value.trim(), size = $("f-size").value.trim(), price = $("f-price").value.trim();
+    var lines = ["Fresh on the rack: " + (name || "…")];
+    var detail = [size && "Size " + size, price && "$" + Number(price).toFixed(2)].filter(Boolean).join(" · ");
+    if (detail) lines.push(detail);
+    lines.push("");
+    lines.push($("f-depop").value.trim() ? "Shop it on Depop, link in bio, or stop by the store." : "Message us to buy, or stop by the store.");
+    lines.push("Every piece is triple inspected, and 10% of every sale goes to Love Chapel's food pantry in Columbus, IN.");
+    lines.push("");
+    lines.push("#amyscloset #thrift #columbusindiana #shopsecondhand #thriftfinds");
+    return lines.join("\n");
+  }
+  ["f-name", "f-size", "f-price", "f-depop"].forEach(function (id) {
+    $(id).addEventListener("input", function () { if (!captionTouched) $("f-caption").value = buildCaption(); });
+  });
+  $("f-caption").value = buildCaption();
+
+  // ---------- Meta ----------
+  function graph(path, params, file) {
+    var body = new FormData();
+    Object.keys(params).forEach(function (k) { body.append(k, params[k]); });
+    if (file) body.append("source", file, "photo.jpg");
+    body.append("access_token", S.pagetoken);
+    return fetch(GRAPH + path, { method: "POST", body: body }).then(function (r) {
+      return r.json().then(function (j) { if (!r.ok || j.error) throw new Error((j.error && j.error.message) || r.status); return j; });
+    });
+  }
+  function postFacebook(caption, blob, link) {
+    var msg = caption.replace("link in bio", "here: " + link);
+    return graph("/" + S.page + "/photos", { message: link ? msg : caption }, blob);
+  }
+  function waitForUrl(url, tries) {
+    // The website takes a minute or two to republish after each change.
+    return fetch(url, { method: "HEAD", cache: "no-store" }).then(function (r) { return r.ok; }).catch(function () { return false; })
+      .then(function (ok) {
+        if (ok) return true;
+        if (tries <= 0) throw new Error("The photo isn't on the website yet, so Instagram can't fetch it. Try again in a few minutes.");
+        return new Promise(function (res) { setTimeout(res, 15000); }).then(function () { return waitForUrl(url, tries - 1); });
+      });
+  }
+  function postInstagram(caption, imageUrl) {
+    return waitForUrl(imageUrl, 20)
+      .then(function () { return graph("/" + S.ig + "/media", { image_url: imageUrl, caption: caption }); })
+      .then(function (c) { return graph("/" + S.ig + "/media_publish", { creation_id: c.id }); });
+  }
+
+  // ---------- add item ----------
+  function slugify(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50) || "item"; }
+  $("add-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    $("log").innerHTML = "";
+    if (!S.token) { log("Add your GitHub key in Settings first.", "bad"); $("settings").open = true; return; }
+    if (!photoBlob) { log("Pick a photo first.", "bad"); return; }
+    var wantFb = $("f-fb").checked, wantIg = $("f-ig").checked;
+    if ((wantFb && (!S.page || !S.pagetoken)) || (wantIg && (!S.ig || !S.pagetoken))) {
+      log("Facebook/Instagram posting needs the Page ID, Page token and Instagram ID in Settings.", "bad"); return;
+    }
+    var name = $("f-name").value.trim();
+    var price = $("f-price").value.trim();
+    var id = slugify(name) + "-" + Date.now().toString(36);
+    var item = {
+      id: id, name: name, size: $("f-size").value.trim(),
+      price: price ? Number(price).toFixed(2) : "",
+      image: "images/products/" + id + ".jpg",
+      depop: $("f-depop").value.trim(), added: new Date().toISOString().slice(0, 10), sold: false
+    };
+    var caption = $("f-caption").value;
+    var blob = photoBlob;
+    $("add-btn").disabled = true;
+    log("Uploading photo…");
+    blobToB64(blob)
+      .then(function (data) { return gh(item.image, { method: "PUT", body: { message: "Add photo: " + name, branch: S.branch, content: data } }); })
+      .then(function () { log("Adding to the website…"); return updateProducts(function (items) { items.push(item); }, "List item: " + name); })
+      .then(function () { log("On the website. It shows up in 1–2 minutes.", "ok"); })
+      .then(function () {
+        if (!wantFb) return;
+        log("Posting to Facebook…");
+        return postFacebook(caption, blob, item.depop).then(function () { log("Posted to Facebook.", "ok"); })
+          .catch(function (err) { log("Facebook post failed: " + err.message, "bad"); });
+      })
+      .then(function () {
+        if (!wantIg) return;
+        log("Waiting for the website to update, then posting to Instagram…");
+        return postInstagram(caption, S.site + item.image).then(function () { log("Posted to Instagram.", "ok"); })
+          .catch(function (err) { log("Instagram post failed: " + err.message, "bad"); });
+      })
+      .then(function () {
+        $("add-form").reset(); photoBlob = null; $("preview").hidden = true; captionTouched = false;
+        $("f-caption").value = buildCaption(); log("Done. Ready for the next one.", "ok"); refresh();
+      })
+      .catch(function (err) { log(err.message, "bad"); })
+      .then(function () { $("add-btn").disabled = false; });
+  });
+
+  // ---------- rack list ----------
+  function esc(t) { var d = document.createElement("div"); d.textContent = t == null ? "" : String(t); return d.innerHTML; }
+  function refresh() {
+    if (!S.token) return;
+    var ul = $("items");
+    ul.innerHTML = '<li class="hint" style="display:block;border:0">Loading…</li>';
+    getProducts().then(function (p) {
+      var items = p.items.slice().reverse();
+      if (!items.length) { ul.innerHTML = '<li class="hint" style="display:block;border:0">Nothing listed yet. Add your first item above.</li>'; return; }
+      ul.innerHTML = items.map(function (it) {
+        return '<li data-id="' + esc(it.id) + '">' +
+          '<img src="' + esc(S.site + it.image) + '" alt="">' +
+          '<div class="info"><span class="name">' + esc(it.name) + '</span>' +
+          '<span class="meta">' + [it.size && "Size " + esc(it.size), it.price ? "$" + esc(it.price) : "No price"].filter(Boolean).join(" · ") +
+          (it.sold ? ' <span class="badge sold">Sold</span>' : '') + (!it.depop ? ' <span class="badge nolink">No Depop link</span>' : '') + '</span>' +
+          '<div class="actions">' +
+          '<button class="ghost" type="button" data-act="sold">' + (it.sold ? "Relist" : "Mark sold") + '</button>' +
+          '<button class="ghost" type="button" data-act="link">' + (it.depop ? "Change Depop link" : "Add Depop link") + '</button>' +
+          '<button class="ghost" type="button" data-act="remove">Remove</button>' +
+          '</div></div></li>';
+      }).join("");
+    }).catch(function (e) { ul.innerHTML = '<li class="hint" style="display:block;border:0">' + esc(e.message) + '</li>'; });
+  }
+  $("refresh-btn").addEventListener("click", refresh);
+  $("items").addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-act]"); if (!btn) return;
+    var li = btn.closest("li"), id = li.getAttribute("data-id"), act = btn.getAttribute("data-act");
+    if (act === "link") {
+      if (li.querySelector(".link-edit")) return;
+      var box = document.createElement("div");
+      box.className = "link-edit"; box.style.cssText = "display:flex;gap:6px;flex-wrap:wrap";
+      box.innerHTML = '<input type="url" placeholder="https://www.depop.com/products/..." style="flex:1 1 200px"><button class="ghost" type="button">Save link</button>';
+      li.querySelector(".info").appendChild(box);
+      box.querySelector("input").focus();
+      box.querySelector("button").addEventListener("click", function () {
+        var url = box.querySelector("input").value.trim();
+        this.disabled = true;
+        updateProducts(function (items) { items.forEach(function (it) { if (it.id === id) it.depop = url; }); }, "Update Depop link")
+          .then(refresh).catch(function (err) { alertInline(li, err.message); });
+      });
+      return;
+    }
+    if (act === "remove" && btn.textContent !== "Tap again to remove") {
+      btn.textContent = "Tap again to remove"; return;
+    }
+    btn.disabled = true;
+    updateProducts(function (items) {
+      for (var i = items.length - 1; i >= 0; i--) {
+        if (items[i].id !== id) continue;
+        if (act === "sold") items[i].sold = !items[i].sold;
+        if (act === "remove") items.splice(i, 1);
+      }
+    }, act === "sold" ? "Update sold status" : "Remove item").then(refresh).catch(function (err) { alertInline(li, err.message); });
+  });
+  function alertInline(li, msg) {
+    var p = document.createElement("p"); p.className = "hint"; p.style.color = "var(--bad)"; p.textContent = msg;
+    li.querySelector(".info").appendChild(p);
+  }
+  refresh();
+})();
+</script>
+</body>
+</html>

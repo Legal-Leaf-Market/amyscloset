@@ -142,6 +142,7 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 .item .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font: 500 0.85rem/1.3 var(--mono); color: var(--ink-soft); }
 .item .price { font: 400 1.25rem/1 var(--display); color: var(--ink); font-variant-numeric: tabular-nums; }
 .item .buy { justify-self: start; margin-top: 6px; font: 600 0.9rem/1 var(--body); color: var(--thread); text-decoration: none; }
+.rack-empty { color: var(--ink-soft); grid-column: 1 / -1; }
 .item .buy:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 /* Love Chapel */
@@ -280,53 +281,14 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
         <h2>Fresh on the rack</h2>
         <p class="lede">A few pieces from this week. New donations are inspected and hung every week, so follow along to catch them first.</p>
       </div>
-      <div class="rack" aria-label="Fresh on the rack">
-        <article class="item">
-          <img src="images/products/ghost-face-sweatshirt.jpg" alt="Ghost Face graphic crewneck sweatshirt" loading="lazy" width="720" height="960">
-          <div class="item-body">
-            <h3>Ghost Face graphic crewneck sweatshirt</h3>
-            <div class="meta"><span>Faded black</span><span class="price">Ask us</span></div>
-            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
-          </div>
-        </article>
-        <article class="item">
-          <img src="images/products/diamondback-kings-island-tee.jpg" alt="Diamondback Kings Island coaster tee" loading="lazy" width="720" height="960">
-          <div class="item-body">
-            <h3>Diamondback Kings Island coaster tee</h3>
-            <div class="meta"><span>Navy</span><span class="price">Ask us</span></div>
-            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
-          </div>
-        </article>
-        <article class="item">
-          <img src="images/products/red-bird-cardigan.jpg" alt="Natural Impressions cardigan with embroidered tree and birds" loading="lazy" width="720" height="960">
-          <div class="item-body">
-            <h3>Natural Impressions cardigan with embroidered tree and birds</h3>
-            <div class="meta"><span>Size M</span><span class="price">$5.99</span></div>
-            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
-          </div>
-        </article>
-        <article class="item">
-          <img src="images/products/purple-cap-sleeve-blouse.jpg" alt="Purple cap-sleeve blouse" loading="lazy" width="720" height="960">
-          <div class="item-body">
-            <h3>Purple cap-sleeve blouse</h3>
-            <div class="meta"><span>Size M</span><span class="price">$4.99</span></div>
-            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
-          </div>
-        </article>
-        <article class="item">
-          <img src="images/products/pink-lace-cami.jpg" alt="Pink cami with lace trim" loading="lazy" width="720" height="960">
-          <div class="item-body">
-            <h3>Pink cami with lace trim</h3>
-            <div class="meta"><span>Size M</span><span class="price">$3.99</span></div>
-            <a class="buy js-buy" href="https://www.facebook.com/profile.php?id=100091049706849" target="_blank" rel="noopener">Message to buy →</a>
-          </div>
-        </article>
+      <div class="rack" id="rack" aria-label="Fresh on the rack" aria-live="polite">
+        <p class="rack-empty">Loading this week's pieces…</p>
       </div>
       <div class="shop-links">
         <a class="shop-card js-store" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">
-          <span class="go">SHOP ONLINE →</span>
+          <span class="go">DEPOP →</span>
           <h3>Shop our full closet</h3>
-          <p>See every available item with its size, price and photos. Pay securely online or pick up in the store.</p>
+          <p>See every available item with its size, price and photos. Buy online through Depop, which handles checkout and shipping.</p>
         </a>
         <a class="shop-card js-facebook" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">
           <span class="go">FACEBOOK →</span>
@@ -366,7 +328,7 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
   var LINKS = {
     facebook:  "https://www.facebook.com/profile.php?id=100091049706849",
     instagram: "",  // e.g. https://www.instagram.com/amyscloset
-    store:     ""   // online store link once it exists
+    store:     ""   // Depop shop link, e.g. https://www.depop.com/amyscloset/
   };
   // ============================
   (function () {
@@ -377,6 +339,31 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
     apply(".js-facebook", LINKS.facebook);
     apply(".js-instagram", LINKS.instagram);
     apply(".js-store", LINKS.store || LINKS.facebook);
+
+    // Fresh on the rack: items come from products.json (edited with admin.html).
+    var rack = document.getElementById("rack");
+    function esc(t) { var d = document.createElement("div"); d.textContent = t == null ? "" : String(t); return d.innerHTML; }
+    function card(p) {
+      var meta = p.size ? "Size " + esc(p.size) : "";
+      var price = p.price ? "$" + esc(p.price) : "Ask us";
+      var link = p.depop || LINKS.facebook;
+      var label = p.depop ? "Buy on Depop →" : "Message to buy →";
+      return '<article class="item">' +
+        '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" width="720" height="960">' +
+        '<div class="item-body"><h3>' + esc(p.name) + '</h3>' +
+        '<div class="meta"><span>' + meta + '</span><span class="price">' + price + '</span></div>' +
+        '<a class="buy" href="' + esc(link) + '" target="_blank" rel="noopener">' + label + '</a></div></article>';
+    }
+    fetch("products.json", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (items) {
+        var live = items.filter(function (p) { return !p.sold; }).reverse();
+        rack.innerHTML = live.length ? live.map(card).join("")
+          : '<p class="rack-empty">Everything sold! New pieces go up every week. Check back soon.</p>';
+      })
+      .catch(function () {
+        rack.innerHTML = '<p class="rack-empty">See our latest pieces on <a href="' + esc(LINKS.facebook) + '" target="_blank" rel="noopener">Facebook</a>.</p>';
+      });
     document.getElementById("year").textContent = new Date().getFullYear();
   })();
 </script>
