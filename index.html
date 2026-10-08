@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amy's Closet</title>
+<meta name="description" content="Amy's Closet is a donation-based clothing resale shop. Every item is triple inspected, and 10% of every sale goes to Love Chapel, a food pantry in Columbus, Indiana.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single scrolling storefront. Hanging-tag motif: the 10% tag, inspection stamps, and the cycle from donation to dinner table. */
+:root {
+  --paper: #f4f5f7;
+  --card: #ffffff;
+  --ink: #1d2740;          /* denim */
+  --ink-soft: #4b5672;
+  --line: #d9dde6;
+  --tag: #efe3c4;          /* manila price tag */
+  --tag-ink: #4a3b14;
+  --thread: #c9881c;       /* marigold tag string */
+  --thread-ink: #ffffff;
+  --display: "Young Serif", Georgia, "Times New Roman", serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121725; --card: #1a2133; --ink: #e8ecf5; --ink-soft: #a7b0c6;
+    --line: #2c3550; --tag: #3a321d; --tag-ink: #f1e3bd; --thread: #e2a73f; --thread-ink: #1a1405;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121725; --card: #1a2133; --ink: #e8ecf5; --ink-soft: #a7b0c6;
+  --line: #2c3550; --tag: #3a321d; --tag-ink: #f1e3bd; --thread: #e2a73f; --thread-ink: #1a1405;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.0625rem/1.65 var(--body);
+  padding-inline: 16px;
+}
+img { max-width: 100%; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--thread); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.4rem, 7vw, 4.25rem); }
+h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0; }
+.wrap { max-width: 1080px; margin-inline: auto; }
+.eyebrow { font: 500 0.78rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+.lede { color: var(--ink-soft); max-width: 60ch; font-size: 1.15rem; }
+
+/* Header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 20px; }
+.brand { font-family: var(--display); font-size: 1.5rem; text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 6px 20px; font-weight: 500; font-size: 0.95rem; }
+.nav a { text-decoration: none; color: var(--ink-soft); }
+.nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 48px; align-items: center; padding-block: 40px 72px; }
+.hero > div { display: grid; gap: 22px; min-width: 0; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font: 600 1rem/1 var(--body); text-decoration: none; border: 2px solid var(--ink); }
+.btn.solid { background: var(--ink); color: var(--paper); }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn:hover { transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) { .btn:hover { transform: none; } }
+
+/* The hanging tag */
+.tag-hang { display: grid; justify-items: center; }
+.string { width: 2px; height: 56px; background: var(--thread); }
+.tag {
+  position: relative; width: min(300px, 100%); background: var(--tag); color: var(--tag-ink);
+  padding: 46px 28px 30px; text-align: center; display: grid; gap: 8px;
+  clip-path: polygon(22% 0, 78% 0, 100% 14%, 100% 100%, 0 100%, 0 14%);
+  transform: rotate(-4deg); transform-origin: top center;
+  animation: sway 6s ease-in-out infinite;
+}
+.tag::before { content: ""; position: absolute; top: 16px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 2px var(--thread); }
+.tag .big { font: 400 5.5rem/1 var(--display); }
+.tag .small { font: 500 0.8rem/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+@keyframes sway { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(2deg); } }
+@media (prefers-reduced-motion: reduce) { .tag { animation: none; } }
+
+/* Sections */
+section.block { padding-block: 72px; border-top: 1px solid var(--line); }
+.head { display: grid; gap: 12px; margin-bottom: 36px; }
+
+/* Cycle */
+.cycle { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; counter-reset: step; }
+.cycle li { counter-increment: step; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.cycle li::before { content: "0" counter(step); font: 500 0.8rem/1 var(--mono); color: var(--thread); letter-spacing: 0.1em; }
+.cycle p { color: var(--ink-soft); font-size: 0.98rem; }
+
+/* Inspection */
+.inspect { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.stamp { border: 2px dashed var(--line); border-radius: var(--radius); padding: 22px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.stamp .mark { justify-self: start; font: 500 0.8rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; padding: 7px 10px; border: 2px solid var(--thread); color: var(--thread); border-radius: 4px; transform: rotate(-2deg); }
+.stamp p { color: var(--ink-soft); font-size: 0.98rem; }
+
+/* Donate */
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.two > div { min-width: 0; display: grid; gap: 14px; align-content: start; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; }
+.checks li::before { content: "✓"; font-weight: 700; color: var(--thread); }
+.checks.no li::before { content: "✕"; color: var(--ink-soft); }
+.note { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; color: var(--ink-soft); font-size: 0.98rem; }
+
+/* Resellers */
+.band { background: var(--ink); color: var(--paper); border-radius: 16px; padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.band .eyebrow { color: var(--tag); }
+.band p { color: var(--paper); opacity: 0.85; }
+.band .btn.solid { background: var(--thread); border-color: var(--thread); color: var(--thread-ink); }
+.band ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; }
+
+/* Shop */
+.shop-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.shop-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; display: grid; gap: 10px; align-content: start; text-decoration: none; min-width: 0; }
+.shop-card:hover { border-color: var(--ink); }
+.shop-card .go { font: 500 0.85rem/1 var(--mono); color: var(--thread); letter-spacing: 0.06em; }
+.shop-card p { color: var(--ink-soft); font-size: 0.98rem; }
+
+/* Love Chapel */
+.chapel { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 32px; align-items: center; }
+.pct { font: 400 clamp(4.5rem, 14vw, 8rem)/0.9 var(--display); color: var(--thread); }
+.chapel > div { display: grid; gap: 14px; min-width: 0; }
+
+footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; color: var(--ink-soft); font-size: 0.92rem; }
+
+@media (max-width: 860px) {
+  .hero, .two, .band { grid-template-columns: minmax(0, 1fr); }
+  .hero { padding-block: 16px 56px; gap: 24px; }
+  .cycle { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .inspect, .shop-links { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .cycle { grid-template-columns: minmax(0, 1fr); }
+  .chapel { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  section.block { padding-block: 56px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="brand" href="#top">Amy's Closet</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#donate">Donate</a>
+      <a href="#resellers">Resellers &amp; bulk</a>
+      <a href="#shop">Shop</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Donated clothes · Second chances · Columbus, Indiana</span>
+        <h1>Your closet clean-out feeds a neighbor.</h1>
+        <p class="lede">Amy's Closet resells donated clothing. Every piece is inspected three times before it reaches the rack, and 10% of every sale goes to Love Chapel, a food pantry in Columbus, Indiana.</p>
+        <div class="ctas">
+          <a class="btn solid" href="#shop">Shop the closet</a>
+          <a class="btn ghost" href="#donate">Donate clothes</a>
+        </div>
+      </div>
+      <div class="tag-hang" aria-hidden="true">
+        <div class="string"></div>
+        <div class="tag">
+          <span class="small">Of every sale</span>
+          <span class="big">10%</span>
+          <span class="small">goes to Love Chapel<br>food pantry</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="how">
+      <div class="head">
+        <span class="eyebrow">How it works</span>
+        <h2>From your closet to someone's table</h2>
+      </div>
+      <ol class="cycle">
+        <li><h3>You donate</h3><p>Drop off the clothes you no longer wear. Clean, gently used pieces get a second life here.</p></li>
+        <li><h3>We inspect, three times</h3><p>Every item is checked on intake, after cleaning, and again before it's listed or hung.</p></li>
+        <li><h3>Someone finds a great piece</h3><p>Shoppers, resellers and bulk buyers get quality clothing at a fair price.</p></li>
+        <li><h3>10% feeds families</h3><p>A tenth of every sale goes to Love Chapel to help keep its food pantry stocked.</p></li>
+      </ol>
+    </section>
+
+    <section class="block" id="quality">
+      <div class="head">
+        <span class="eyebrow">Our quality promise</span>
+        <h2>Triple inspected before it hits the rack</h2>
+        <p class="lede">Donations come in, and only the good stuff goes out. Every item goes through three separate checks before it's posted online or placed in the store.</p>
+      </div>
+      <div class="inspect">
+        <div class="stamp"><span class="mark">Check 1 · Intake</span><h3>Sorted on arrival</h3><p>We sort each donation the day it comes in and pull anything with stains, holes, odors or heavy wear.</p></div>
+        <div class="stamp"><span class="mark">Check 2 · Prep</span><h3>Cleaned and tested</h3><p>Items are freshened up, then we test zippers, buttons, snaps and seams, and look closely at the fabric.</p></div>
+        <div class="stamp"><span class="mark">Check 3 · Listing</span><h3>Final look</h3><p>One last look under good light before it's photographed, posted or hung. If it isn't right, it doesn't go out.</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="donate">
+      <div class="head">
+        <span class="eyebrow">Donate</span>
+        <h2>Best practices for donating</h2>
+        <p class="lede">A few minutes of prep helps more of your donation make it to the rack, and that means more money for Love Chapel.</p>
+      </div>
+      <div class="two">
+        <div>
+          <h3>Please do</h3>
+          <ul class="checks">
+            <li>Wash or dry-clean everything before you drop it off.</li>
+            <li>Check pockets for cash, keys, receipts and IDs.</li>
+            <li>Make sure zippers, buttons and snaps work.</li>
+            <li>Fold items or keep them on hangers, and bag them by type (tops, pants, kids, shoes).</li>
+            <li>Keep shoes together in pairs. A rubber band or tied laces works.</li>
+            <li>Bring in-season clothing when you can. It sells faster.</li>
+            <li>Donate accessories too: belts, scarves, handbags and jewelry.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Please don't</h3>
+          <ul class="checks no">
+            <li>Items with stains, rips, holes, pilling or missing buttons</li>
+            <li>Anything that smells of smoke, mildew or pets</li>
+            <li>Used underwear or socks, or worn swimwear</li>
+            <li>Wet or damp bags, which can spoil everything inside</li>
+            <li>Recalled children's items</li>
+          </ul>
+          <p class="note">Not sure if something will make the cut? Bring it anyway. Our three-step inspection will sort it out. Message us on <a class="js-facebook" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">Facebook</a> to set up a drop-off.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="resellers">
+      <div class="band">
+        <div style="display:grid;gap:14px;min-width:0">
+          <span class="eyebrow">Resellers &amp; bulk orders</span>
+          <h2>Resellers welcome</h2>
+          <p>Do you run a booth, an online shop or a pop-up? Shop with us. If you need more than a few pieces, we'll put together a bulk order for you: a size run, a style, a season or a whole category.</p>
+          <div class="ctas"><a class="btn solid js-facebook" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">Ask about a bulk order</a></div>
+        </div>
+        <ul>
+          <li>Resellers are always welcome to shop.</li>
+          <li>We arrange bulk orders on request.</li>
+          <li>Tell us what you're looking for, and we'll pull from incoming donations.</li>
+          <li>Every bulk sale gives 10% to Love Chapel too.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block" id="shop">
+      <div class="head">
+        <span class="eyebrow">Shop</span>
+        <h2>New pieces go up every week</h2>
+        <p class="lede">Browse what's in the closet right now, and follow along so you see new arrivals first.</p>
+      </div>
+      <div class="shop-links">
+        <a class="shop-card js-store" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">
+          <span class="go">ONLINE STORE →</span>
+          <h3>Shop online</h3>
+          <p>See every available item with its size, price and photos.</p>
+        </a>
+        <a class="shop-card js-facebook" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">
+          <span class="go">FACEBOOK →</span>
+          <h3>Facebook</h3>
+          <p>New arrivals, store updates, and an easy way to message us.</p>
+        </a>
+        <a class="shop-card js-instagram" href="https://www.instagram.com/" target="_blank" rel="noopener">
+          <span class="go">INSTAGRAM →</span>
+          <h3>Instagram</h3>
+          <p>Shop individual pieces straight from our posts.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="block" id="love-chapel">
+      <div class="chapel">
+        <span class="pct" aria-hidden="true">10%</span>
+        <div>
+          <span class="eyebrow">Giving back</span>
+          <h2>Every sale helps stock Love Chapel</h2>
+          <p class="lede">Love Chapel runs a food pantry for families in Columbus, Indiana. Ten percent of every Amy's Closet sale goes to Love Chapel. That includes in-store, online and bulk sales.</p>
+          <p><a href="https://columbuslovechapel.com/" target="_blank" rel="noopener">Learn more about Love Chapel →</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <span id="year">2026</span> Amy's Closet · Donated clothing, triple inspected.</span>
+    <span>10% of every sale goes to Love Chapel, Columbus, IN.</span>
+  </footer>
+</div>
+
+<script>
+  // ===== EDIT THESE LINKS =====
+  // Paste the real URLs once each account exists. Leave a value blank to keep the default.
+  var LINKS = {
+    facebook:  "",  // e.g. https://www.facebook.com/amyscloset
+    instagram: "",  // e.g. https://www.instagram.com/amyscloset
+    store:     ""   // online store, e.g. https://amyscloset.square.site
+  };
+  // ============================
+  (function () {
+    function apply(cls, url) {
+      if (!url) return;
+      document.querySelectorAll(cls).forEach(function (a) { a.href = url; });
+    }
+    apply(".js-facebook", LINKS.facebook);
+    apply(".js-instagram", LINKS.instagram);
+    apply(".js-store", LINKS.store || LINKS.facebook);
+    document.getElementById("year").textContent = new Date().getFullYear();
+  })();
+</script>
+</body>
+</html>
