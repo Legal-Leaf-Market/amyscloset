@@ -207,11 +207,14 @@ a { color: inherit; }
     return new Promise(function (resolve, reject) {
       var img = new Image();
       img.onload = function () {
-        var scale = Math.min(1, 1066 / Math.max(img.width, img.height));
+        var scale = Math.min(1, 1600 / Math.max(img.width, img.height));
         var c = document.createElement("canvas");
         c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
-        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-        c.toBlob(function (b) { b ? resolve(b) : reject(new Error("Couldn't read that photo.")); }, "image/jpeg", 0.82);
+        var ctx = c.getContext("2d");
+        // Light touch-up so shop-light photos look crisp: a little brighter, more contrast and color.
+        if ("filter" in ctx) ctx.filter = "brightness(1.04) contrast(1.06) saturate(1.08)";
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (b) { b ? resolve(b) : reject(new Error("Couldn't read that photo.")); }, "image/jpeg", 0.88);
         URL.revokeObjectURL(img.src);
       };
       img.onerror = function () { reject(new Error("Couldn't read that photo. Try a JPG or PNG.")); };
