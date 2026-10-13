@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob: mediastream:; connect-src 'self' https://0.peerjs.com wss://0.peerjs.com; base-uri 'none'; form-action 'none'">
+<title>Crossroads Private Line</title>
+<link rel="icon" href="data:,">
+<style>
+/* Layout: one screen at a time (start, setup, chat, destroyed). The chat is a header, a message log and a composer; calls slide in above the log. */
+:root {
+  --bg: #f3f4f6;
+  --panel: #ffffff;
+  --ink: #141821;
+  --ink-soft: #5a6274;
+  --line: #d8dce4;
+  --mine: #1f5f4a;
+  --mine-ink: #ffffff;
+  --theirs: #e7eaf0;
+  --theirs-ink: #141821;
+  --accent: #1f7a5c;
+  --accent-ink: #ffffff;
+  --danger: #b3261e;
+  --danger-ink: #ffffff;
+  --ok: #1f7a5c;
+  --warn: #9a6a00;
+  --radius: 12px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1116; --panel: #171b23; --ink: #e8ebf1; --ink-soft: #9aa3b5; --line: #2a3140;
+    --mine: #2e8b6a; --mine-ink: #ffffff; --theirs: #232937; --theirs-ink: #e8ebf1;
+    --accent: #3aa57f; --accent-ink: #06130e; --danger: #e5484d; --danger-ink: #ffffff;
+    --ok: #3aa57f; --warn: #e0a83a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1116; --panel: #171b23; --ink: #e8ebf1; --ink-soft: #9aa3b5; --line: #2a3140;
+  --mine: #2e8b6a; --mine-ink: #ffffff; --theirs: #232937; --theirs-ink: #e8ebf1;
+  --accent: #3aa57f; --accent-ink: #06130e; --danger: #e5484d; --danger-ink: #ffffff;
+  --ok: #3aa57f; --warn: #e0a83a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1rem/1.5 var(--font); }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+.screen { min-height: 100%; display: flex; flex-direction: column; }
+.center { align-items: center; justify-content: center; padding: 24px 16px; }
+.card { width: 100%; max-width: 440px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+.card h1 { margin: 0 0 6px; font-size: 1.5rem; line-height: 1.2; }
+.card p { margin: 0 0 16px; color: var(--ink-soft); }
+.lock { display: inline-flex; gap: 8px; align-items: center; font: 500 0.78rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok); margin-bottom: 12px; }
+
+label { display: block; font-weight: 600; font-size: 0.9rem; margin: 14px 0 6px; }
+.hint { font-weight: 400; color: var(--ink-soft); }
+input[type="text"], input[type="password"] {
+  width: 100%; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg);
+}
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 999px; padding: 10px 18px; font-weight: 600; background: var(--accent); color: var(--accent-ink); }
+.btn.block { width: 100%; margin-top: 20px; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.danger { background: var(--danger); color: var(--danger-ink); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.error { color: var(--danger); font-size: 0.9rem; margin-top: 10px; min-height: 1.2em; }
+.fine { font-size: 0.82rem; color: var(--ink-soft); margin-top: 16px; }
+
+/* Chat */
+#chat { height: 100%; max-width: 820px; margin-inline: auto; width: 100%; }
+header.bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.who { min-width: 0; }
+.who strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--ink-soft); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); flex: none; }
+.status[data-state="connected"] .dot { background: var(--ok); }
+.status[data-state="error"] .dot, .status[data-state="left"] .dot { background: var(--danger); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.icon-btn { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 12px; display: inline-flex; gap: 6px; align-items: center; font-size: 0.9rem; font-weight: 600; }
+.icon-btn svg { width: 18px; height: 18px; }
+.icon-btn.danger { border-color: var(--danger); color: var(--danger); background: transparent; }
+
+.share { margin: 12px 16px 0; padding: 14px; border: 1px dashed var(--line); border-radius: var(--radius); background: var(--panel); }
+.share p { margin: 0 0 10px; font-size: 0.92rem; color: var(--ink-soft); }
+.share-row { display: flex; gap: 8px; }
+.share-row input { flex: 1; min-width: 0; font: 0.82rem var(--mono); padding: 9px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); }
+
+.callbox { margin: 12px 16px 0; padding: 12px; border-radius: var(--radius); background: #000; color: #fff; position: relative; }
+.callbox video#remoteVideo { width: 100%; max-height: 52vh; border-radius: 8px; background: #000; display: block; }
+.callbox video#localVideo { position: absolute; right: 20px; top: 20px; width: 28%; max-width: 160px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.6); background: #222; }
+.callbox .voice { padding: 28px 8px; text-align: center; font-size: 1.05rem; }
+.call-controls { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+.call-controls button { border: 0; border-radius: 999px; padding: 9px 16px; font-weight: 600; background: #2b2f38; color: #fff; }
+.call-controls button.end { background: #e5484d; }
+.call-controls button[aria-pressed="true"] { background: #fff; color: #000; }
+
+.incoming { margin: 12px 16px 0; padding: 14px; border-radius: var(--radius); background: var(--panel); border: 2px solid var(--accent); display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+
+#log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.msg { max-width: min(78%, 520px); padding: 8px 12px; border-radius: 16px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg time { display: block; font-size: 0.72rem; opacity: 0.7; margin-top: 2px; }
+.msg.mine { align-self: flex-end; background: var(--mine); color: var(--mine-ink); border-bottom-right-radius: 4px; }
+.msg.theirs { align-self: flex-start; background: var(--theirs); color: var(--theirs-ink); border-bottom-left-radius: 4px; }
+.sys { align-self: center; font-size: 0.8rem; color: var(--ink-soft); text-align: center; padding: 4px 8px; }
+
+form.composer { display: flex; gap: 8px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--panel); }
+form.composer input { flex: 1; min-width: 0; padding: 11px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); }
+
+/* Self-destruct dialog */
+dialog { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--ink); padding: 24px; width: min(420px, calc(100% - 32px)); }
+dialog::backdrop { background: rgba(0,0,0,0.6); }
+dialog h2 { margin: 0 0 6px; font-size: 1.25rem; color: var(--danger); }
+dialog p { margin: 0; color: var(--ink-soft); font-size: 0.92rem; }
+.dialog-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<!-- 1. Start: no link yet -->
+<main id="start" class="screen center" hidden>
+  <div class="card">
+    <div class="lock">● End-to-end encrypted</div>
+    <h1>Crossroads Private Line</h1>
+    <p>Text, voice and video between two people. Messages go straight from one device to the other, are encrypted with a key that only lives in your private link, and are never saved anywhere.</p>
+    <button class="btn block" id="newLine" type="button">Start a new private line</button>
+    <p class="fine">You'll get a link to send to the other person. Anyone with the link can join, so share it privately.</p>
+  </div>
+</main>
+
+<!-- 2. Setup: name and self-destruct password -->
+<main id="setup" class="screen center" hidden>
+  <form class="card" id="setupForm" autocomplete="off">
+    <div class="lock">● End-to-end encrypted</div>
+    <h1 id="setupTitle">Set up your line</h1>
+    <p id="setupLead">Pick a display name and a self-destruct password. You'll type the password twice whenever you want to wipe this conversation for both of you.</p>
+    <label for="name">Display name <span class="hint">(optional)</span></label>
+    <input type="text" id="name" maxlength="40" placeholder="e.g. Jake">
+    <label for="pw1">Self-destruct password <span class="hint">(6+ characters)</span></label>
+    <input type="password" id="pw1" minlength="6" required autocomplete="new-password">
+    <label for="pw2">Type it again</label>
+    <input type="password" id="pw2" minlength="6" required autocomplete="new-password">
+    <div class="error" id="setupError" role="alert"></div>
+    <button class="btn block" type="submit" id="enterBtn">Open private line</button>
+    <p class="fine">The password stays on this device and is forgotten when you close the tab.</p>
+  </form>
+</main>
+
+<!-- 3. Chat -->
+<main id="chat" class="screen" hidden>
+  <header class="bar">
+    <div class="who">
+      <strong id="peerLabel">Private line</strong>
+      <span class="status" id="status" data-state="waiting"><span class="dot"></span><span id="statusText">Connecting…</span></span>
+    </div>
+    <div class="actions">
+      <button class="icon-btn" id="voiceBtn" type="button" disabled aria-label="Voice call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Call
+      </button>
+      <button class="icon-btn" id="videoBtn" type="button" disabled aria-label="Video call">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m23 7-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Video
+      </button>
+      <button class="icon-btn danger" id="destroyBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>Self-destruct
+      </button>
+    </div>
+  </header>
+
+  <section class="share" id="shareBox" hidden>
+    <p>Send this link to the other person. It holds the encryption key, so share it only with them.</p>
+    <div class="share-row">
+      <input id="shareLink" readonly aria-label="Private link">
+      <button class="btn" id="copyBtn" type="button">Copy</button>
+    </div>
+  </section>
+
+  <section class="incoming" id="incoming" hidden>
+    <strong id="incomingText">Incoming call</strong>
+    <span class="actions">
+      <button class="btn" id="acceptBtn" type="button">Answer</button>
+      <button class="btn danger" id="declineBtn" type="button">Decline</button>
+    </span>
+  </section>
+
+  <section class="callbox" id="callbox" hidden>
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay playsinline muted></video>
+    <div class="voice" id="voiceLabel">Calling…</div>
+    <div class="call-controls">
+      <button type="button" id="muteBtn" aria-pressed="false">Mute</button>
+      <button type="button" id="camBtn" aria-pressed="false">Camera off</button>
+      <button type="button" class="end" id="hangupBtn">End call</button>
+    </div>
+  </section>
+
+  <div id="log" aria-live="polite"></div>
+
+  <form class="composer" id="composer" autocomplete="off">
+    <input type="text" id="msgInput" maxlength="4000" placeholder="Waiting for the other person…" disabled aria-label="Message">
+    <button class="btn" type="submit" id="sendBtn" disabled>Send</button>
+  </form>
+</main>
+
+<!-- 4. Destroyed -->
+<main id="gone" class="screen center" hidden>
+  <div class="card">
+    <h1>Line destroyed</h1>
+    <p id="goneText">This conversation was wiped. Nothing from it was saved, and this link won't open on this device again.</p>
+    <button class="btn block" id="freshBtn" type="button">Start a new private line</button>
+  </div>
+</main>
+
+<dialog id="destroyDialog">
+  <form method="dialog" id="destroyForm" autocomplete="off">
+    <h2>Self-destruct</h2>
+    <p>This wipes every message on both devices, ends any call and kills the link. It can't be undone.</p>
+    <label for="dpw1">Self-destruct password</label>
+    <input type="password" id="dpw1" required autocomplete="off">
+    <label for="dpw2">Type it again</label>
+    <input type="password" id="dpw2" required autocomplete="off">
+    <div class="error" id="destroyError" role="alert"></div>
+    <div class="dialog-actions">
+      <button class="btn ghost" type="button" id="destroyCancel">Cancel</button>
+      <button class="btn danger" type="submit" id="destroyConfirm">Destroy everything</button>
+    </div>
+  </form>
+</dialog>
+
+<audio id="remoteAudio" autoplay></audio>
+
+<script src="peerjs.min.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const PREFIX = "crossroads-line-";
+  const BURNED_KEY = "crossroads-line-burned";
+  const PBKDF2_ROUNDS = 250000;
+  // Signaling broker that introduces the two devices. Defaults to the free PeerJS cloud;
+  // set window.CROSSROADS_BROKER = { host, port, path, secure } to use your own PeerServer.
+  const BROKER = Object.assign({ debug: 0 }, window.CROSSROADS_BROKER || {});
+  const $ = (id) => document.getElementById(id);
+  const enc = new TextEncoder();
+  const dec = new TextDecoder();
+
+  const state = {
+    roomId: null, key: null, keyB64: null,
+    name: "", pwSalt: null, pwHash: null, wrongTries: 0,
+    peer: null, conn: null, verified: false, peerName: "",
+    isHost: false, destroyed: false, retryTimer: null,
+    call: null, pendingCall: null, localStream: null, callIsVideo: false,
+    unread: 0, gen: 0,
+  };
+
+  /* ---------- encoding helpers ---------- */
+  const b64u = {
+    enc(buf) {
+      const bytes = new Uint8Array(buf);
+      let s = "";
+      for (const b of bytes) s += String.fromCharCode(b);
+      return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    },
+    dec(str) {
+      const s = atob(str.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((str.length + 3) % 4));
+      return Uint8Array.from(s, (c) => c.charCodeAt(0));
+    },
+  };
+  const toHex = (buf) => Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, "0")).join("");
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  /* ---------- crypto ---------- */
+  async function importKey(raw) {
+    return crypto.subtle.importKey("raw", raw, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+  }
+  async function seal(obj) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, state.key, enc.encode(JSON.stringify(obj)));
+    return { iv: b64u.enc(iv), ct: b64u.enc(ct) };
+  }
+  async function unseal(pkt) {
+    if (!pkt || typeof pkt.iv !== "string" || typeof pkt.ct !== "string") throw new Error("bad packet");
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64u.dec(pkt.iv) }, state.key, b64u.dec(pkt.ct));
+    return JSON.parse(dec.decode(pt));
+  }
+  async function hashPassword(pw, salt) {
+    const base = await crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveBits"]);
+    const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: PBKDF2_ROUNDS }, base, 256);
+    return toHex(bits);
+  }
+  async function sha256Hex(text) {
+    return toHex(await crypto.subtle.digest("SHA-256", enc.encode(text)));
+  }
+
+  /* ---------- burned links (this device only) ---------- */
+  function readBurned() {
+    try { return JSON.parse(localStorage.getItem(BURNED_KEY) || "[]"); } catch { return []; }
+  }
+  async function isBurned(roomId) {
+    return readBurned().includes(await sha256Hex(roomId));
+  }
+  async function burn(roomId) {
+    try {
+      const list = readBurned();
+      list.push(await sha256Hex(roomId));
+      localStorage.setItem(BURNED_KEY, JSON.stringify(list.slice(-500)));
+    } catch { /* storage blocked: the line is still wiped in memory */ }
+  }
+
+  /* ---------- screens ---------- */
+  function show(id) {
+    for (const s of ["start", "setup", "chat", "gone"]) $(s).hidden = s !== id;
+  }
+  function linkFor(roomId, keyB64) {
+    return `${location.origin}${location.pathname}#r=${roomId}&k=${keyB64}`;
+  }
+  function parseLink() {
+    const p = new URLSearchParams(location.hash.slice(1));
+    const r = p.get("r"), k = p.get("k");
+    if (!r || !k || !/^[0-9a-f]{32}$/.test(r)) return null;
+    try {
+      const raw = b64u.dec(k);
+      if (raw.length !== 32) return null;
+      return { roomId: r, keyB64: k, raw };
+    } catch { return null; }
+  }
+
+  async function boot() {
+    if (!window.crypto || !crypto.subtle) {
+      show("start");
+      $("newLine").disabled = true;
+      $("newLine").textContent = "Open this page over https to use it";
+      return;
+    }
+    const link = parseLink();
+    if (!link) { show("start"); return; }
+    if (await isBurned(link.roomId)) {
+      history.replaceState(null, "", location.pathname);
+      $("goneText").textContent = "This line was destroyed. Its messages are gone and the link no longer works on this device.";
+      show("gone");
+      return;
+    }
+    state.roomId = link.roomId;
+    state.keyB64 = link.keyB64;
+    state.key = await importKey(link.raw);
+    if (state.createdHere) {
+      $("setupTitle").textContent = "Set up your line";
+      $("setupLead").textContent = "Pick a display name and a self-destruct password. You'll type the password twice whenever you want to wipe this conversation for both of you.";
+    } else {
+      $("setupTitle").textContent = "You've been invited to a private line";
+      $("setupLead").textContent = "Pick a display name and a self-destruct password. Typing the password twice wipes this conversation for both of you.";
+    }
+    show("setup");
+    $("name").focus();
+  }
+
+  function newLine() {
+    const roomId = toHex(crypto.getRandomValues(new Uint8Array(16)));
+    const keyB64 = b64u.enc(crypto.getRandomValues(new Uint8Array(32)));
+    history.replaceState(null, "", `#r=${roomId}&k=${keyB64}`);
+    state.createdHere = true;
+    boot();
+  }
+
+  /* ---------- setup ---------- */
+  $("newLine").addEventListener("click", newLine);
+  $("freshBtn").addEventListener("click", () => {
+    $("pw1").value = $("pw2").value = "";
+    newLine();
+  });
+
+  $("setupForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pw1 = $("pw1").value, pw2 = $("pw2").value;
+    const err = $("setupError");
+    if (pw1.length < 6) { err.textContent = "Use at least 6 characters."; return; }
+    if (pw1 !== pw2) { err.textContent = "The two passwords don't match."; return; }
+    err.textContent = "";
+    $("enterBtn").disabled = true;
+    state.name = $("name").value.trim().slice(0, 40) || "Them";
+    state.pwSalt = crypto.getRandomValues(new Uint8Array(16));
+    state.pwHash = await hashPassword(pw1, state.pwSalt);
+    $("pw1").value = $("pw2").value = "";
+    $("enterBtn").disabled = false;
+    enterRoom();
+  });
+
+  function enterRoom() {
+    show("chat");
+    $("shareLink").value = linkFor(state.roomId, state.keyB64);
+    claimOrJoin();
+  }
+
+  /* ---------- status + log ---------- */
+  function setStatus(kind, text) {
+    $("status").dataset.state = kind;
+    $("statusText").textContent = text;
+    const live = kind === "connected";
+    $("msgInput").disabled = !live;
+    $("sendBtn").disabled = !live;
+    $("voiceBtn").disabled = !live || !!state.call;
+    $("videoBtn").disabled = !live || !!state.call;
+    $("msgInput").placeholder = live ? "Message" : "Waiting for the other person…";
+    $("shareBox").hidden = live;
+  }
+  function sys(text) {
+    const d = document.createElement("div");
+    d.className = "sys";
+    d.textContent = text;
+    $("log").append(d);
+    d.scrollIntoView({ block: "end" });
+  }
+  function bubble(text, mine, ts) {
+    const d = document.createElement("div");
+    d.className = "msg " + (mine ? "mine" : "theirs");
+    d.textContent = text;
+    const t = document.createElement("time");
+    t.textContent = new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    d.append(t);
+    $("log").append(d);
+    d.scrollIntoView({ block: "end" });
+    if (!mine && document.hidden) {
+      state.unread++;
+      document.title = `(${state.unread}) Crossroads Private Line`;
+    }
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) { state.unread = 0; document.title = "Crossroads Private Line"; }
+  });
+
+  /* ---------- connection ----------
+     Whoever opens the link first claims the room's ID on the PeerJS broker and waits.
+     The second person connects to that ID. Both prove they hold the key by exchanging
+     an encrypted hello before anything else is accepted. */
+  function claimOrJoin() {
+    if (state.destroyed || !state.roomId) return;
+    clearTimeout(state.retryTimer);
+    setStatus("waiting", "Connecting…");
+    const gen = state.gen;
+    const p = new Peer(PREFIX + state.roomId, BROKER);
+    let opened = false;
+    p.on("open", () => {
+      if (gen !== state.gen) return p.destroy();
+      opened = true;
+      state.peer = p;
+      state.isHost = true;
+      setStatus("waiting", "Waiting for the other person to open the link");
+      wirePeer(p);
+    });
+    p.on("error", (err) => {
+      if (gen !== state.gen) return;
+      if (!opened && err.type === "unavailable-id") {
+        p.destroy();
+        joinAsGuest();
+      } else {
+        peerError(err);
+      }
+    });
+  }
+
+  function joinAsGuest() {
+    if (state.destroyed || !state.roomId) return;
+    const gen = state.gen;
+    const p = new Peer(BROKER);
+    state.peer = p;
+    state.isHost = false;
+    p.on("open", () => {
+      if (gen !== state.gen) return p.destroy();
+      wirePeer(p);
+      setupConn(p.connect(PREFIX + state.roomId, { reliable: true, serialization: "json" }));
+    });
+    p.on("error", (err) => {
+      if (gen !== state.gen) return;
+      if (err.type === "peer-unavailable") {
+        // The other person left before we connected. Take over the room and wait for them.
+        retry(800);
+      } else {
+        peerError(err);
+      }
+    });
+  }
+
+  function retry(ms) {
+    if (state.destroyed) return;
+    try { state.peer && state.peer.destroy(); } catch {}
+    state.peer = null;
+    clearTimeout(state.retryTimer);
+    state.retryTimer = setTimeout(claimOrJoin, ms);
+  }
+
+  function peerError(err) {
+    if (state.destroyed) return;
+    const type = err && err.type;
+    if (["network", "server-error", "socket-error", "socket-closed", "disconnected"].includes(type)) {
+      setStatus("error", "Connection lost. Retrying…");
+      retry(4000);
+    } else if (type === "browser-incompatible") {
+      setStatus("error", "This browser can't make private calls. Try an up-to-date Chrome, Safari or Firefox.");
+    } else {
+      setStatus("error", "Something went wrong. Retrying…");
+      retry(4000);
+    }
+  }
+
+  function wirePeer(p) {
+    p.on("connection", (c) => {
+      if (state.conn && state.conn.open) {
+        // Two people max. Turn away a third.
+        c.on("open", () => c.close());
+        return;
+      }
+      setupConn(c);
+    });
+    p.on("call", incomingCall);
+    p.on("disconnected", () => {
+      if (!state.destroyed && !p.destroyed) { try { p.reconnect(); } catch {} }
+    });
+  }
+
+  function setupConn(c) {
+    state.conn = c;
+    state.verified = false;
+    c.on("open", async () => {
+      setStatus("waiting", "Securing connection…");
+      try { c.send(await seal({ t: "hello", name: state.name })); } catch {}
+    });
+    c.on("data", (pkt) => onData(c, pkt));
+    c.on("close", () => connClosed(c));
+    c.on("error", () => connClosed(c));
+  }
+
+  function connClosed(c) {
+    if (state.conn !== c || state.destroyed) return;
+    const wasVerified = state.verified;
+    state.conn = null;
+    state.verified = false;
+    endCall(false);
+    if (wasVerified) sys(`${state.peerName || "The other person"} left.`);
+    setStatus("left", state.isHost ? "The other person left. They can rejoin with the same link." : "Reconnecting…");
+    if (!state.isHost) retry(1000);
+  }
+
+  async function send(obj) {
+    if (!state.conn || !state.conn.open) throw new Error("not connected");
+    state.conn.send(await seal(obj));
+  }
+
+  async function onData(c, pkt) {
+    let m;
+    try { m = await unseal(pkt); }
+    catch {
+      // Wrong key: not someone holding our link.
+      if (!state.verified) { try { c.close(); } catch {} }
+      return;
+    }
+    if (c !== state.conn) return;
+    switch (m.t) {
+      case "hello": {
+        const first = !state.verified;
+        state.verified = true;
+        state.peerName = String(m.name || "Them").slice(0, 40);
+        $("peerLabel").textContent = state.peerName;
+        setStatus("connected", "Connected · end-to-end encrypted");
+        if (first) sys(`${state.peerName} joined. Messages are encrypted and never stored.`);
+        break;
+      }
+      case "msg":
+        if (state.verified && typeof m.text === "string") bubble(m.text.slice(0, 4000), false, Number(m.ts) || Date.now());
+        break;
+      case "hangup":
+      case "decline":
+        if (state.call || state.pendingCall) sys(m.t === "decline" ? "Call declined." : "Call ended.");
+        endCall(false);
+        break;
+      case "destroy":
+        if (state.verified) destroyAll(false);
+        break;
+    }
+  }
+
+  /* ---------- messages ---------- */
+  $("composer").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = $("msgInput").value.trim();
+    if (!text || !state.verified) return;
+    const ts = Date.now();
+    try {
+      await send({ t: "msg", text, ts });
+      bubble(text, true, ts);
+      $("msgInput").value = "";
+    } catch {
+      sys("Not sent: the other person isn't connected.");
+    }
+  });
+
+  /* ---------- calls ---------- */
+  async function getMedia(video) {
+    return navigator.mediaDevices.getUserMedia({ audio: true, video: video ? { facingMode: "user" } : false });
+  }
+
+  function showCallUI(video, label) {
+    state.callIsVideo = video;
+    $("callbox").hidden = false;
+    $("remoteVideo").hidden = !video;
+    $("localVideo").hidden = !video;
+    $("camBtn").hidden = !video;
+    $("voiceLabel").hidden = false;
+    $("voiceLabel").textContent = label;
+    $("muteBtn").setAttribute("aria-pressed", "false");
+    $("muteBtn").textContent = "Mute";
+    $("camBtn").setAttribute("aria-pressed", "false");
+    $("camBtn").textContent = "Camera off";
+    if (video) $("localVideo").srcObject = state.localStream;
+    $("voiceBtn").disabled = $("videoBtn").disabled = true;
+  }
+
+  function attachCall(call, video) {
+    state.call = call;
+    call.on("stream", (remote) => {
+      if (state.call !== call) return;
+      if (video) {
+        $("remoteVideo").srcObject = remote;
+        $("voiceLabel").hidden = true;
+      } else {
+        $("voiceLabel").textContent = `On a call with ${state.peerName || "them"}`;
+      }
+      $("remoteAudio").srcObject = video ? null : remote;
+      $("remoteAudio").play().catch(() => {});
+      $("remoteVideo").play().catch(() => {});
+    });
+    call.on("close", () => { if (state.call === call) endCall(false); });
+    call.on("error", () => { if (state.call === call) endCall(false); });
+  }
+
+  async function startCall(video) {
+    if (!state.verified || state.call) return;
+    try {
+      state.localStream = await getMedia(video);
+    } catch {
+      sys(video ? "Camera or microphone blocked. Allow access in your browser settings." : "Microphone blocked. Allow access in your browser settings.");
+      return;
+    }
+    showCallUI(video, `Calling ${state.peerName || "them"}…`);
+    attachCall(state.peer.call(state.conn.peer, state.localStream, { metadata: { video } }), video);
+  }
+
+  function incomingCall(call) {
+    // Only accept calls from the verified person we're already talking to.
+    if (!state.verified || !state.conn || call.peer !== state.conn.peer || state.call || state.pendingCall) {
+      call.close();
+      return;
+    }
+    const video = !!(call.metadata && call.metadata.video);
+    state.pendingCall = call;
+    $("incomingText").textContent = `${state.peerName || "They"} ${video ? "wants to video call" : "is calling"}`;
+    $("incoming").hidden = false;
+    call.on("close", () => { if (state.pendingCall === call) endCall(false); });
+  }
+
+  $("acceptBtn").addEventListener("click", async () => {
+    const call = state.pendingCall;
+    if (!call) return;
+    const video = !!(call.metadata && call.metadata.video);
+    state.pendingCall = null;
+    $("incoming").hidden = true;
+    try {
+      state.localStream = await getMedia(video);
+    } catch {
+      sys("Couldn't use your microphone or camera, so the call was declined.");
+      call.close();
+      send({ t: "decline" }).catch(() => {});
+      return;
+    }
+    showCallUI(video, "Connecting…");
+    call.answer(state.localStream);
+    attachCall(call, video);
+  });
+
+  $("declineBtn").addEventListener("click", () => {
+    const call = state.pendingCall;
+    state.pendingCall = null;
+    $("incoming").hidden = true;
+    if (call) call.close();
+    send({ t: "decline" }).catch(() => {});
+  });
+
+  function endCall(notify) {
+    const had = state.call || state.pendingCall;
+    if (notify && had && state.verified) send({ t: "hangup" }).catch(() => {});
+    const call = state.call, pending = state.pendingCall;
+    state.call = null;
+    state.pendingCall = null;
+    try { call && call.close(); } catch {}
+    try { pending && pending.close(); } catch {}
+    if (state.localStream) state.localStream.getTracks().forEach((t) => t.stop());
+    state.localStream = null;
+    $("remoteVideo").srcObject = null;
+    $("localVideo").srcObject = null;
+    $("remoteAudio").srcObject = null;
+    $("callbox").hidden = true;
+    $("incoming").hidden = true;
+    const live = state.verified && !state.destroyed;
+    $("voiceBtn").disabled = $("videoBtn").disabled = !live;
+  }
+
+  $("voiceBtn").addEventListener("click", () => startCall(false));
+  $("videoBtn").addEventListener("click", () => startCall(true));
+  $("hangupBtn").addEventListener("click", () => { sys("Call ended."); endCall(true); });
+  $("muteBtn").addEventListener("click", (e) => {
+    if (!state.localStream) return;
+    const muted = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    state.localStream.getAudioTracks().forEach((t) => (t.enabled = !muted));
+    e.currentTarget.setAttribute("aria-pressed", String(muted));
+    e.currentTarget.textContent = muted ? "Unmute" : "Mute";
+  });
+  $("camBtn").addEventListener("click", (e) => {
+    if (!state.localStream) return;
+    const off = e.currentTarget.getAttribute("aria-pressed") !== "true";
+    state.localStream.getVideoTracks().forEach((t) => (t.enabled = !off));
+    e.currentTarget.setAttribute("aria-pressed", String(off));
+    e.currentTarget.textContent = off ? "Camera on" : "Camera off";
+  });
+
+  /* ---------- share link ---------- */
+  $("copyBtn").addEventListener("click", async () => {
+    const link = $("shareLink").value;
+    try {
+      if (navigator.share && matchMedia("(pointer: coarse)").matches) {
+        await navigator.share({ title: "Private line", url: link });
+        return;
+      }
+      await navigator.clipboard.writeText(link);
+    } catch {
+      $("shareLink").select();
+      try { document.execCommand("copy"); } catch {}
+    }
+    $("copyBtn").textContent = "Copied";
+    setTimeout(() => ($("copyBtn").textContent = "Copy"), 1800);
+  });
+
+  /* ---------- self-destruct ---------- */
+  const dlg = $("destroyDialog");
+  $("destroyBtn").addEventListener("click", () => {
+    $("dpw1").value = $("dpw2").value = "";
+    $("destroyError").textContent = "";
+    dlg.showModal();
+    $("dpw1").focus();
+  });
+  $("destroyCancel").addEventListener("click", () => dlg.close());
+
+  $("destroyForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const a = $("dpw1").value, b = $("dpw2").value;
+    const err = $("destroyError");
+    if (a !== b) { err.textContent = "The two entries don't match. Type the same password in both boxes."; return; }
+    if (state.wrongTries >= 5) { err.textContent = "Too many wrong tries. Close the tab to wipe this conversation from this device."; return; }
+    $("destroyConfirm").disabled = true;
+    const ok = (await hashPassword(a, state.pwSalt)) === state.pwHash;
+    $("destroyConfirm").disabled = false;
+    if (!ok) {
+      state.wrongTries++;
+      err.textContent = `Wrong self-destruct password. ${5 - state.wrongTries} tries left.`;
+      return;
+    }
+    $("dpw1").value = $("dpw2").value = "";
+    dlg.close();
+    destroyAll(true);
+  });
+
+  async function destroyAll(byMe) {
+    if (state.destroyed) return;
+    if (byMe && state.verified) {
+      try { await send({ t: "destroy" }); } catch {}
+      await sleep(500); // let the wipe signal reach the other device
+    }
+    state.destroyed = true;
+    state.gen++;
+    clearTimeout(state.retryTimer);
+    endCall(false);
+    $("log").replaceChildren();
+    $("msgInput").value = "";
+    $("shareLink").value = "";
+    $("peerLabel").textContent = "Private line";
+    await burn(state.roomId);
+    try { state.conn && state.conn.close(); } catch {}
+    try { state.peer && state.peer.destroy(); } catch {}
+    Object.assign(state, {
+      roomId: null, key: null, keyB64: null, name: "", pwSalt: null, pwHash: null, wrongTries: 0,
+      peer: null, conn: null, verified: false, peerName: "", isHost: false, createdHere: false,
+    });
+    history.replaceState(null, "", location.pathname);
+    $("goneText").textContent = byMe
+      ? "You wiped this conversation on both devices. Nothing from it was saved, and the link is dead."
+      : "The other person destroyed this conversation. Every message is gone and the link is dead.";
+    show("gone");
+    state.destroyed = false; // ready for a fresh line
+  }
+
+  // Opening a different link in the same tab starts over cleanly.
+  window.addEventListener("hashchange", () => { if (!state.roomId) boot(); else location.reload(); });
+  window.addEventListener("pagehide", () => { try { state.peer && state.peer.destroy(); } catch {} });
+
+  boot();
+})();
+</script>
+</body>
+</html>
