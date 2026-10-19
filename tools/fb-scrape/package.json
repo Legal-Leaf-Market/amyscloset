@@ -1,0 +1,12 @@
+{
+  "name": "amyscloset-fb-scrape",
+  "private": true,
+  "type": "module",
+  "description": "Scrape Amy's Closet Facebook photo posts (photo + caption + date) for the website.",
+  "scripts": {
+    "scrape": "node scrape.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.48.2"
+  }
+}
