@@ -38,7 +38,7 @@ h2 { font-size: 1.35rem; }
 .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 16px; }
 label { display: grid; gap: 6px; font-weight: 600; font-size: 0.95rem; }
 .hint { font-weight: 400; color: var(--ink-soft); font-size: 0.85rem; }
-input[type=text], input[type=url], input[type=password], input[type=number], textarea {
+input[type=text], input[type=url], input[type=password], input[type=number], textarea, select {
   width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
 }
 textarea { min-height: 110px; resize: vertical; }
@@ -55,12 +55,13 @@ button:disabled { opacity: 0.5; cursor: wait; }
 .log .ok { color: var(--ok); } .log .bad { color: var(--bad); } .log .info { color: var(--ink-soft); }
 .items { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .items li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.items .thumb { width: 64px; aspect-ratio: 3 / 4; border-radius: 6px; }
 .items img { width: 64px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; background: var(--line); }
 .items .info { display: grid; gap: 6px; min-width: 0; }
 .items .name { font-weight: 600; overflow-wrap: anywhere; }
-.items .meta { font: 400 0.85rem/1.3 var(--mono); color: var(--ink-soft); }
+.items .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font: 400 0.85rem/1.3 var(--mono); color: var(--ink-soft); }
 .items .actions { display: flex; flex-wrap: wrap; gap: 6px; }
-.badge { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; border: 1px solid currentColor; }
+.badge { white-space: nowrap; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; border: 1px solid currentColor; }
 .badge.sold { color: var(--bad); } .badge.nolink { color: var(--thread); }
 details summary { cursor: pointer; font-weight: 600; }
 details[open] summary { margin-bottom: 14px; }
@@ -92,6 +93,10 @@ a { color: inherit; }
       <label>Size <input type="text" id="f-size" placeholder="M"></label>
       <label>Price ($) <input type="number" id="f-price" step="0.01" min="0" placeholder="5.99"></label>
     </div>
+    <div class="row">
+      <label>Department <select id="f-dept"><option>Women's</option><option>Kids</option><option>Men's</option><option>Shoes & Accessories</option><option>Mixed</option></select></label>
+      <label>Type <select id="f-cat"><option>Tops</option><option>Bottoms</option><option>Dresses & Jumpsuits</option><option>Outerwear</option><option>Sleepwear</option><option>Scrubs</option><option>Swim</option><option>Shoes</option><option>Accessories</option></select></label>
+    </div>
     <label>Depop link
       <input type="url" id="f-depop" placeholder="https://www.depop.com/products/...">
       <span class="hint">On Depop, open the listing, tap Share, then Copy link. Leave blank and the button says "Message to buy" instead.</span>
@@ -113,6 +118,8 @@ a { color: inherit; }
       <h2>On the rack</h2>
       <button class="ghost" type="button" id="refresh-btn">Refresh</button>
     </div>
+    <input type="search" id="find" placeholder="Search the rack (name, color, size)…" aria-label="Search the rack">
+    <input type="file" id="photo-pick" accept="image/*" hidden>
     <ul class="items" id="items"><li class="hint" style="display:block;border:0">Add your GitHub key in Settings to see items.</li></ul>
   </section>
 
@@ -302,7 +309,8 @@ a { color: inherit; }
       id: id, name: name, size: $("f-size").value.trim(),
       price: price ? Number(price).toFixed(2) : "",
       image: "images/products/" + id + ".jpg",
-      depop: $("f-depop").value.trim(), added: new Date().toISOString().slice(0, 10), sold: false
+      depop: $("f-depop").value.trim(), added: new Date().toISOString().slice(0, 10), sold: false,
+      department: $("f-dept").value, category: $("f-cat").value, source: "lister"
     };
     var caption = $("f-caption").value;
     var blob = photoBlob;
@@ -334,46 +342,72 @@ a { color: inherit; }
 
   // ---------- rack list ----------
   function esc(t) { var d = document.createElement("div"); d.textContent = t == null ? "" : String(t); return d.innerHTML; }
+  var rackCache = {};
   function refresh() {
     if (!S.token) return;
     var ul = $("items");
     ul.innerHTML = '<li class="hint" style="display:block;border:0">Loading…</li>';
     getProducts().then(function (p) {
-      var items = p.items.slice().reverse();
+      rackCache = {}; p.items.forEach(function (it) { rackCache[it.id] = it; });
+      var q = $("find").value.trim().toLowerCase();
+      var items = p.items.slice().reverse().filter(function (it) {
+        return !q || [it.name, it.color, it.size, it.category, it.department].join(" ").toLowerCase().indexOf(q) !== -1;
+      });
       if (!items.length) { ul.innerHTML = '<li class="hint" style="display:block;border:0">Nothing listed yet. Add your first item above.</li>'; return; }
       ul.innerHTML = items.map(function (it) {
         return '<li data-id="' + esc(it.id) + '">' +
-          '<img src="' + esc(S.site + it.image) + '" alt="">' +
+          (it.image ? '<img src="' + esc(S.site + it.image) + '" alt="">'
+            : '<div class="thumb" style="background:' + esc((it.swatch && it.swatch[0]) || "var(--line)") + '" title="No photo yet"></div>') +
           '<div class="info"><span class="name">' + esc(it.name) + '</span>' +
           '<span class="meta">' + [it.size && "Size " + esc(it.size), it.price ? "$" + esc(it.price) : "No price"].filter(Boolean).join(" · ") +
-          (it.sold ? ' <span class="badge sold">Sold</span>' : '') + (!it.depop ? ' <span class="badge nolink">No Depop link</span>' : '') + '</span>' +
+          (it.sold ? ' <span class="badge sold">Sold</span>' : '') + (!it.depop ? ' <span class="badge nolink">No Depop link</span>' : '') + (!it.image ? ' <span class="badge nolink">No photo</span>' : '') + '</span>' +
           '<div class="actions">' +
           '<button class="ghost" type="button" data-act="sold">' + (it.sold ? "Relist" : "Mark sold") + '</button>' +
-          '<button class="ghost" type="button" data-act="link">' + (it.depop ? "Change Depop link" : "Add Depop link") + '</button>' +
+          '<button class="ghost" type="button" data-act="edit">Edit size, price, link</button>' +
+          '<button class="ghost" type="button" data-act="photo">' + (it.image ? "Change photo" : "Add photo") + '</button>' +
           '<button class="ghost" type="button" data-act="remove">Remove</button>' +
           '</div></div></li>';
       }).join("");
     }).catch(function (e) { ul.innerHTML = '<li class="hint" style="display:block;border:0">' + esc(e.message) + '</li>'; });
   }
   $("refresh-btn").addEventListener("click", refresh);
+  var findTimer;
+  $("find").addEventListener("input", function () { clearTimeout(findTimer); findTimer = setTimeout(refresh, 250); });
+  var photoTarget = null;
+  $("photo-pick").addEventListener("change", function () {
+    var f = this.files[0], t = photoTarget; if (!f || !t) return;
+    var path = "images/products/" + t.id + "-" + Date.now().toString(36) + ".jpg";
+    alertInline(t.li, "Uploading photo…");
+    resize(f).then(blobToB64)
+      .then(function (data) { return gh(path, { method: "PUT", body: { message: "Add photo: " + t.id, branch: S.branch, content: data } }); })
+      .then(function () { return updateProducts(function (items) { items.forEach(function (it) { if (it.id === t.id) it.image = path; }); }, "Add photo to " + t.id); })
+      .then(refresh).catch(function (err) { alertInline(t.li, err.message); });
+  });
   $("items").addEventListener("click", function (e) {
     var btn = e.target.closest("button[data-act]"); if (!btn) return;
     var li = btn.closest("li"), id = li.getAttribute("data-id"), act = btn.getAttribute("data-act");
-    if (act === "link") {
+    if (act === "edit") {
       if (li.querySelector(".link-edit")) return;
+      var cur = rackCache[id] || {};
       var box = document.createElement("div");
-      box.className = "link-edit"; box.style.cssText = "display:flex;gap:6px;flex-wrap:wrap";
-      box.innerHTML = '<input type="url" placeholder="https://www.depop.com/products/..." style="flex:1 1 200px"><button class="ghost" type="button">Save link</button>';
+      box.className = "link-edit"; box.style.cssText = "display:grid;gap:6px";
+      box.innerHTML = '<div class="row"><input type="text" placeholder="Size" aria-label="Size"><input type="number" step="0.01" min="0" placeholder="Price" aria-label="Price"></div>' +
+        '<input type="url" placeholder="https://www.depop.com/products/..." aria-label="Depop link"><button class="ghost" type="button">Save</button>';
+      var ins = box.querySelectorAll("input");
+      ins[0].value = cur.size || ""; ins[1].value = cur.price || ""; ins[2].value = cur.depop || "";
       li.querySelector(".info").appendChild(box);
-      box.querySelector("input").focus();
+      ins[0].focus();
       box.querySelector("button").addEventListener("click", function () {
-        var url = box.querySelector("input").value.trim();
         this.disabled = true;
-        updateProducts(function (items) { items.forEach(function (it) { if (it.id === id) it.depop = url; }); }, "Update Depop link")
-          .then(refresh).catch(function (err) { alertInline(li, err.message); });
+        var size = ins[0].value.trim(), price = ins[1].value.trim(), url = ins[2].value.trim();
+        updateProducts(function (items) { items.forEach(function (it) {
+          if (it.id !== id) return;
+          it.size = size; it.price = price ? Number(price).toFixed(2) : ""; it.depop = url;
+        }); }, "Update item: " + (cur.name || id)).then(refresh).catch(function (err) { alertInline(li, err.message); });
       });
       return;
     }
+    if (act === "photo") { photoTarget = { id: id, li: li }; $("photo-pick").value = ""; $("photo-pick").click(); return; }
     if (act === "remove" && btn.textContent !== "Tap again to remove") {
       btn.textContent = "Tap again to remove"; return;
     }
@@ -387,7 +421,7 @@ a { color: inherit; }
     }, act === "sold" ? "Update sold status" : "Remove item").then(refresh).catch(function (err) { alertInline(li, err.message); });
   });
   function alertInline(li, msg) {
-    var p = document.createElement("p"); p.className = "hint"; p.style.color = "var(--bad)"; p.textContent = msg;
+    var p = document.createElement("p"); p.className = "hint"; if (!/…$/.test(msg)) p.style.color = "var(--bad)"; p.textContent = msg;
     li.querySelector(".info").appendChild(p);
   }
   refresh();

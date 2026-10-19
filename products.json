@@ -1,7 +1,1642 @@
 [
-  {"id": "ghost-face-sweatshirt", "name": "Ghost Face graphic crewneck sweatshirt", "size": "", "price": "", "image": "images/products/ghost-face-sweatshirt.jpg", "depop": "", "added": "2026-10-08", "sold": false},
-  {"id": "diamondback-kings-island-tee", "name": "Diamondback Kings Island coaster tee", "size": "", "price": "", "image": "images/products/diamondback-kings-island-tee.jpg", "depop": "", "added": "2026-10-08", "sold": false},
-  {"id": "red-bird-cardigan", "name": "Natural Impressions cardigan with embroidered tree and birds", "size": "M", "price": "5.99", "image": "images/products/red-bird-cardigan.jpg", "depop": "", "added": "2026-10-08", "sold": false},
-  {"id": "purple-cap-sleeve-blouse", "name": "Purple cap-sleeve blouse", "size": "M", "price": "4.99", "image": "images/products/purple-cap-sleeve-blouse.jpg", "depop": "", "added": "2026-10-08", "sold": false},
-  {"id": "pink-lace-cami", "name": "Pink cami with lace trim", "size": "M", "price": "3.99", "image": "images/products/pink-lace-cami.jpg", "depop": "", "added": "2026-10-08", "sold": false}
+  {
+    "id": "fb-069",
+    "name": "Pink lace-trim cami",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Light pink",
+    "description": "Silky camisole with lace",
+    "source": "facebook",
+    "fb_id": "fb-069",
+    "swatch": [
+      "#f6c9d4"
+    ]
+  },
+  {
+    "id": "fb-070",
+    "name": "Patchwork print jacket",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Outerwear",
+    "department": "Mixed",
+    "color": "Multicolor",
+    "description": "Quilted patchwork batik-style jacket",
+    "source": "facebook",
+    "fb_id": "fb-070",
+    "swatch": [
+      "#e9a23b"
+    ]
+  },
+  {
+    "id": "fb-071",
+    "name": "Teal mock-neck top",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Teal",
+    "description": "Long-sleeve mock-turtleneck",
+    "source": "facebook",
+    "fb_id": "fb-071",
+    "swatch": [
+      "#1f8a8a"
+    ]
+  },
+  {
+    "id": "fb-072",
+    "name": "Navy tee with chiffon hem",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Navy",
+    "description": "Short-sleeve layered-hem top",
+    "source": "facebook",
+    "fb_id": "fb-072",
+    "swatch": [
+      "#1f2c4f"
+    ]
+  },
+  {
+    "id": "fb-073",
+    "name": "Pink floral sleeveless top",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Pink multi",
+    "description": "Floral print tank",
+    "source": "facebook",
+    "fb_id": "fb-073",
+    "swatch": [
+      "#f2a6c0"
+    ]
+  },
+  {
+    "id": "fb-074",
+    "name": "Black sheer sleeveless blouse",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Black",
+    "description": "Ruffle-hem chiffon blouse",
+    "source": "facebook",
+    "fb_id": "fb-074",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-075",
+    "name": "Pink print sleeveless button-up",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Pink",
+    "description": "Collared sleeveless shirt",
+    "source": "facebook",
+    "fb_id": "fb-075",
+    "swatch": [
+      "#ec8fb0"
+    ]
+  },
+  {
+    "id": "fb-076",
+    "name": "Black & white print maxi dress",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Dresses & Jumpsuits",
+    "department": "Mixed",
+    "color": "Black/white",
+    "description": "Short-sleeve tribal print maxi",
+    "source": "facebook",
+    "fb_id": "fb-076",
+    "swatch": [
+      "#1f1f22",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-077",
+    "name": "Red open-knit cardigan",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Red",
+    "description": "Hand-knit style cardigan",
+    "source": "facebook",
+    "fb_id": "fb-077",
+    "swatch": [
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "fb-078",
+    "name": "Black linen button-up",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Black",
+    "description": "Long-sleeve camp-collar shirt",
+    "source": "facebook",
+    "fb_id": "fb-078",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-079",
+    "name": "Black polo shirt",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Black",
+    "description": "Short-sleeve performance polo",
+    "source": "facebook",
+    "fb_id": "fb-079",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-080",
+    "name": "Gray cable-knit cardigan",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Gray",
+    "description": "Button cardigan",
+    "source": "facebook",
+    "fb_id": "fb-080",
+    "swatch": [
+      "#8d8f94"
+    ]
+  },
+  {
+    "id": "fb-081",
+    "name": "Hot pink mock-neck top",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Hot pink",
+    "description": "Long-sleeve mock-turtleneck",
+    "source": "facebook",
+    "fb_id": "fb-081",
+    "swatch": [
+      "#e0338a"
+    ]
+  },
+  {
+    "id": "fb-082",
+    "name": "Navy floral cardigan",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Navy/red",
+    "description": "Floral print button cardigan",
+    "source": "facebook",
+    "fb_id": "fb-082",
+    "swatch": [
+      "#1f2c4f",
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "fb-083",
+    "name": "Coral short-sleeve sweater",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Coral",
+    "description": "Cable-front knit tee",
+    "source": "facebook",
+    "fb_id": "fb-083",
+    "swatch": [
+      "#f07f62"
+    ]
+  },
+  {
+    "id": "fb-084",
+    "name": "Red mock-neck top",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Red",
+    "description": "Long-sleeve mock-turtleneck",
+    "source": "facebook",
+    "fb_id": "fb-084",
+    "swatch": [
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "fb-085",
+    "name": "Navy short-sleeve blouse",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-19",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Navy",
+    "description": "Silky button-front blouse",
+    "source": "facebook",
+    "fb_id": "fb-085",
+    "swatch": [
+      "#1f2c4f"
+    ]
+  },
+  {
+    "id": "fb-058",
+    "name": "Black Chelsea rain boots",
+    "size": "9",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Shoes",
+    "department": "Shoes & Accessories",
+    "color": "Black",
+    "description": "Size 9 ankle rain boots",
+    "source": "facebook",
+    "fb_id": "fb-058",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-059",
+    "name": "Purple scrub top",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Scrubs",
+    "department": "Mixed",
+    "color": "Purple",
+    "description": "V-neck scrub top with pockets",
+    "source": "facebook",
+    "fb_id": "fb-059",
+    "swatch": [
+      "#7a4fb3"
+    ]
+  },
+  {
+    "id": "fb-060",
+    "name": "Under Armour track pants",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Mixed",
+    "color": "Black",
+    "description": "Athletic pants",
+    "source": "facebook",
+    "fb_id": "fb-060",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-061",
+    "name": "Light blue striped polo",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Light blue/white",
+    "description": "Long-sleeve polo with white collar",
+    "source": "facebook",
+    "fb_id": "fb-061",
+    "swatch": [
+      "#a9c8e8",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-062",
+    "name": "White pull-on pants",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Mixed",
+    "color": "White",
+    "description": "Lightweight pull-on pants",
+    "source": "facebook",
+    "fb_id": "fb-062",
+    "swatch": [
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-063",
+    "name": "Gray-blue Cherokee scrub top",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Scrubs",
+    "department": "Mixed",
+    "color": "Gray-blue",
+    "description": "Mock-wrap scrub top",
+    "source": "facebook",
+    "fb_id": "fb-063",
+    "swatch": [
+      "#7f93a8"
+    ]
+  },
+  {
+    "id": "fb-064",
+    "name": "Red sleeveless knit top",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Red",
+    "description": "Fine-knit shell",
+    "source": "facebook",
+    "fb_id": "fb-064",
+    "swatch": [
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "fb-065",
+    "name": "Mint textured knit tee",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Mint",
+    "description": "Short-sleeve textured knit top",
+    "source": "facebook",
+    "fb_id": "fb-065",
+    "swatch": [
+      "#bfe5d2"
+    ]
+  },
+  {
+    "id": "fb-066",
+    "name": "White floral pajama pants",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Sleepwear",
+    "department": "Mixed",
+    "color": "White/pink",
+    "description": "Pull-on lounge pants",
+    "source": "facebook",
+    "fb_id": "fb-066",
+    "swatch": [
+      "#f2f1ee",
+      "#ec8fb0"
+    ]
+  },
+  {
+    "id": "fb-067",
+    "name": "Pink striped henley tee",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Pink/white",
+    "description": "Short-sleeve henley",
+    "source": "facebook",
+    "fb_id": "fb-067",
+    "swatch": [
+      "#ec8fb0",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-068",
+    "name": "Orange ghost Halloween tee",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-29",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Orange",
+    "description": "\"I got a rock\" ghost graphic tee",
+    "source": "facebook",
+    "fb_id": "fb-068",
+    "swatch": [
+      "#ef7d22"
+    ]
+  },
+  {
+    "id": "fb-048",
+    "name": "Magenta button-up shirt",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Magenta",
+    "description": "Long-sleeve roll-tab button-down",
+    "source": "facebook",
+    "fb_id": "fb-048",
+    "swatch": [
+      "#c2187a"
+    ]
+  },
+  {
+    "id": "fb-049",
+    "name": "Hot pink square-neck tank",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Hot pink",
+    "description": "Sleeveless knit tank",
+    "source": "facebook",
+    "fb_id": "fb-049",
+    "swatch": [
+      "#e0338a"
+    ]
+  },
+  {
+    "id": "fb-050",
+    "name": "Pastel gingham sundress",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Dresses & Jumpsuits",
+    "department": "Women's",
+    "color": "Pastel multi",
+    "description": "Button-front sundress with ruffle hem",
+    "source": "facebook",
+    "fb_id": "fb-050",
+    "swatch": [
+      "#f3c6d3"
+    ]
+  },
+  {
+    "id": "fb-051",
+    "name": "Mustard utility romper",
+    "size": "M",
+    "price": "6.99",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Dresses & Jumpsuits",
+    "department": "Women's",
+    "color": "Mustard",
+    "description": "Short-sleeve collared romper",
+    "source": "facebook",
+    "fb_id": "fb-051",
+    "swatch": [
+      "#d1a12c"
+    ]
+  },
+  {
+    "id": "fb-052",
+    "name": "Red holiday print fleece pajama pants",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Sleepwear",
+    "department": "Women's",
+    "color": "Red",
+    "description": "Holiday movie character print",
+    "source": "facebook",
+    "fb_id": "fb-052",
+    "swatch": [
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "fb-053",
+    "name": "Green holiday elf fleece pajama pants",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Sleepwear",
+    "department": "Women's",
+    "color": "Green",
+    "description": "Holiday elf print",
+    "source": "facebook",
+    "fb_id": "fb-053",
+    "swatch": [
+      "#2f7a45"
+    ]
+  },
+  {
+    "id": "fb-054",
+    "name": "Hot pink leggings",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Hot pink",
+    "description": "High-waist leggings",
+    "source": "facebook",
+    "fb_id": "fb-054",
+    "swatch": [
+      "#e0338a"
+    ]
+  },
+  {
+    "id": "fb-055",
+    "name": "Dusty pink joggers",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Dusty pink",
+    "description": "Drawstring jogger pants",
+    "source": "facebook",
+    "fb_id": "fb-055",
+    "swatch": [
+      "#d7a3a8"
+    ]
+  },
+  {
+    "id": "fb-056",
+    "name": "Denim overalls",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Medium blue",
+    "description": "Full-length bib overalls",
+    "source": "facebook",
+    "fb_id": "fb-056",
+    "swatch": [
+      "#4f78b0"
+    ]
+  },
+  {
+    "id": "fb-057",
+    "name": "Houndstooth pull-on pants",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-09-30",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Black/white",
+    "description": "Slim pull-on ankle pants",
+    "source": "facebook",
+    "fb_id": "fb-057",
+    "swatch": [
+      "#1f1f22",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "ghost-face-sweatshirt",
+    "name": "Ghost Face graphic crewneck sweatshirt",
+    "size": "M/L",
+    "price": "",
+    "image": "images/products/ghost-face-sweatshirt.jpg",
+    "depop": "",
+    "added": "2026-10-06",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Black",
+    "description": "Crewneck horror graphic sweatshirt",
+    "source": "facebook",
+    "fb_id": "fb-047",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "diamondback-kings-island-tee",
+    "name": "Diamondback Kings Island coaster tee",
+    "size": "M/L",
+    "price": "",
+    "image": "images/products/diamondback-kings-island-tee.jpg",
+    "depop": "",
+    "added": "2026-10-06",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Faded navy",
+    "description": "Vintage-style graphic tee",
+    "source": "facebook",
+    "fb_id": "fb-046",
+    "swatch": [
+      "#3b4a66"
+    ]
+  },
+  {
+    "id": "red-bird-cardigan",
+    "name": "Natural Impressions cardigan with embroidered tree and birds",
+    "size": "M",
+    "price": "5.99",
+    "image": "images/products/red-bird-cardigan.jpg",
+    "depop": "",
+    "added": "2026-10-06",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Red",
+    "description": "Button cardigan with tree-and-bird embroidery",
+    "source": "facebook",
+    "fb_id": "fb-044",
+    "swatch": [
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "purple-cap-sleeve-blouse",
+    "name": "Purple cap-sleeve blouse",
+    "size": "M",
+    "price": "4.99",
+    "image": "images/products/purple-cap-sleeve-blouse.jpg",
+    "depop": "",
+    "added": "2026-10-06",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Periwinkle",
+    "description": "Silky crewneck blouse",
+    "source": "facebook",
+    "fb_id": "fb-045",
+    "swatch": [
+      "#8f95e6"
+    ]
+  },
+  {
+    "id": "pink-lace-cami",
+    "name": "Pink cami with lace trim",
+    "size": "M",
+    "price": "3.99",
+    "image": "images/products/pink-lace-cami.jpg",
+    "depop": "",
+    "added": "2026-10-06",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Pale pink",
+    "description": "Camisole with lace neckline",
+    "source": "facebook",
+    "fb_id": "fb-043",
+    "swatch": [
+      "#f4d4dc"
+    ]
+  },
+  {
+    "id": "fb-039",
+    "name": "Magazine cover print tote bag",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-09",
+    "sold": false,
+    "category": "Accessories",
+    "department": "Shoes & Accessories",
+    "color": "Multicolor",
+    "description": "Large printed tote with magazine-cover graphic",
+    "source": "facebook",
+    "fb_id": "fb-039",
+    "swatch": [
+      "#e9a23b"
+    ]
+  },
+  {
+    "id": "fb-040",
+    "name": "Rainbow stripe flip-flops",
+    "size": "7",
+    "price": "4.99",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-09",
+    "sold": false,
+    "category": "Shoes",
+    "department": "Shoes & Accessories",
+    "color": "Black/rainbow",
+    "description": "Size 7 sandals, tag $4.99",
+    "source": "facebook",
+    "fb_id": "fb-040",
+    "swatch": [
+      "#1f1f22",
+      "#e9a23b"
+    ]
+  },
+  {
+    "id": "fb-041",
+    "name": "White print Keds slip-ons",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-09",
+    "sold": false,
+    "category": "Shoes",
+    "department": "Shoes & Accessories",
+    "color": "White/black",
+    "description": "Canvas slip-on sneakers with black print",
+    "source": "facebook",
+    "fb_id": "fb-041",
+    "swatch": [
+      "#f2f1ee",
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-042",
+    "name": "Nike Air Max sneakers",
+    "size": "7",
+    "price": "4.99",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-09",
+    "sold": false,
+    "category": "Shoes",
+    "department": "Shoes & Accessories",
+    "color": "Pink/gray",
+    "description": "Size 7 athletic sneakers, tag $4.99",
+    "source": "facebook",
+    "fb_id": "fb-042",
+    "swatch": [
+      "#ec8fb0",
+      "#8d8f94"
+    ]
+  },
+  {
+    "id": "fb-028",
+    "name": "Strawberry & rainbow footed sleeper",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Sleepwear",
+    "department": "Mixed",
+    "color": "Pink",
+    "description": "Baby zip-up footed pajamas with fruit and rainbow print",
+    "source": "facebook",
+    "fb_id": "fb-028",
+    "swatch": [
+      "#ec8fb0"
+    ]
+  },
+  {
+    "id": "fb-029",
+    "name": "Black racing graphic tee",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Black",
+    "description": "Short-sleeve tee with chest logo",
+    "source": "facebook",
+    "fb_id": "fb-029",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-030",
+    "name": "Gray Dean Wagner Realtors tee",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Heather gray",
+    "description": "Short-sleeve logo tee",
+    "source": "facebook",
+    "fb_id": "fb-030",
+    "swatch": [
+      "#a6a6a8"
+    ]
+  },
+  {
+    "id": "fb-031",
+    "name": "Red \"Mom's #1 Fan\" tank",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Tops",
+    "department": "Mixed",
+    "color": "Red",
+    "description": "Kids graphic tank top",
+    "source": "facebook",
+    "fb_id": "fb-031",
+    "swatch": [
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "fb-032",
+    "name": "Bengals color-block hoodie",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Outerwear",
+    "department": "Mixed",
+    "color": "Black/gray/orange",
+    "description": "Cincinnati Bengals pullover hoodie",
+    "source": "facebook",
+    "fb_id": "fb-032",
+    "swatch": [
+      "#1f1f22",
+      "#8d8f94",
+      "#ef7d22"
+    ]
+  },
+  {
+    "id": "fb-033",
+    "name": "Light wash cargo jeans",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Mixed",
+    "color": "Light blue",
+    "description": "Wide-leg cargo-pocket jeans",
+    "source": "facebook",
+    "fb_id": "fb-033",
+    "swatch": [
+      "#a9c8e8"
+    ]
+  },
+  {
+    "id": "fb-034",
+    "name": "Dark wash skinny jeans",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Mixed",
+    "color": "Dark blue",
+    "description": "Skinny-fit jeans",
+    "source": "facebook",
+    "fb_id": "fb-034",
+    "swatch": [
+      "#23395d"
+    ]
+  },
+  {
+    "id": "fb-035",
+    "name": "Gray cargo shorts",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Mixed",
+    "color": "Gray",
+    "description": "Men's cargo shorts",
+    "source": "facebook",
+    "fb_id": "fb-035",
+    "swatch": [
+      "#8d8f94"
+    ]
+  },
+  {
+    "id": "fb-036",
+    "name": "Blue striped board shorts",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Swim",
+    "department": "Mixed",
+    "color": "Blue/white",
+    "description": "Ombre stripe swim trunks",
+    "source": "facebook",
+    "fb_id": "fb-036",
+    "swatch": [
+      "#3d6fc0",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-037",
+    "name": "Cream floral joggers",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Mixed",
+    "color": "Cream/black/tan",
+    "description": "Toddler pull-on joggers with flower print",
+    "source": "facebook",
+    "fb_id": "fb-037",
+    "swatch": [
+      "#efe6d2",
+      "#1f1f22",
+      "#c9a77c"
+    ]
+  },
+  {
+    "id": "fb-038",
+    "name": "Animal print pencil skirt",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-16",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Mixed",
+    "color": "Tan/brown",
+    "description": "Knee-length animal-print skirt",
+    "source": "facebook",
+    "fb_id": "fb-038",
+    "swatch": [
+      "#c9a77c",
+      "#7a5233"
+    ]
+  },
+  {
+    "id": "fb-001",
+    "name": "Dinosaur graphic bodysuit",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Kids",
+    "color": "Cream/white",
+    "description": "Short-sleeve baby onesie with mountain-and-dinosaur print",
+    "source": "facebook",
+    "fb_id": "fb-001",
+    "swatch": [
+      "#efe6d2",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-002",
+    "name": "Black wash kids jeans",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Kids",
+    "color": "Washed black",
+    "description": "Toddler denim jeans, adjustable waist",
+    "source": "facebook",
+    "fb_id": "fb-002",
+    "swatch": [
+      "#3a3a3c"
+    ]
+  },
+  {
+    "id": "fb-003",
+    "name": "Pink floral shorts",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Kids",
+    "color": "Coral pink",
+    "description": "Pull-on shorts with white flower print",
+    "source": "facebook",
+    "fb_id": "fb-003",
+    "swatch": [
+      "#f28c7d"
+    ]
+  },
+  {
+    "id": "fb-004",
+    "name": "Teal plaid shorts",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Kids",
+    "color": "Teal/white",
+    "description": "Pull-on plaid lounge shorts",
+    "source": "facebook",
+    "fb_id": "fb-004",
+    "swatch": [
+      "#1f8a8a",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-005",
+    "name": "Black uniform pants",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Kids",
+    "color": "Black",
+    "description": "Kids flat-front school/uniform pants",
+    "source": "facebook",
+    "fb_id": "fb-005",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-006",
+    "name": "Navy polka-dot shorts",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Kids",
+    "color": "Navy/white",
+    "description": "Pull-on shorts with white dots",
+    "source": "facebook",
+    "fb_id": "fb-006",
+    "swatch": [
+      "#1f2c4f",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-007",
+    "name": "Pink Dean Wagner Realtors tee",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Kids",
+    "color": "Hot pink",
+    "description": "Short-sleeve graphic logo tee",
+    "source": "facebook",
+    "fb_id": "fb-007",
+    "swatch": [
+      "#e0338a"
+    ]
+  },
+  {
+    "id": "fb-008",
+    "name": "Geometric print tunic tee",
+    "size": "S",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Blue/pink/black",
+    "description": "Short-sleeve scoop-neck tunic with fair-isle style stripes",
+    "source": "facebook",
+    "fb_id": "fb-008",
+    "swatch": [
+      "#3d6fc0",
+      "#ec8fb0",
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-009",
+    "name": "Black drawstring knit skirt",
+    "size": "S",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Black",
+    "description": "Pull-on knit mini skirt with drawstring waist",
+    "source": "facebook",
+    "fb_id": "fb-009",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-010",
+    "name": "Black wide-leg trousers",
+    "size": "S",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Black",
+    "description": "High-rise wide-leg dress pants",
+    "source": "facebook",
+    "fb_id": "fb-010",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-011",
+    "name": "Navy & cream striped sweater",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Navy/cream",
+    "description": "Wide-stripe crewneck pullover sweater",
+    "source": "facebook",
+    "fb_id": "fb-011",
+    "swatch": [
+      "#1f2c4f",
+      "#efe6d2"
+    ]
+  },
+  {
+    "id": "fb-012",
+    "name": "Red Cherokee scrub top",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Scrubs",
+    "department": "Women's",
+    "color": "Red",
+    "description": "Mock-wrap V-neck scrub top with pockets",
+    "source": "facebook",
+    "fb_id": "fb-012",
+    "swatch": [
+      "#c0262d"
+    ]
+  },
+  {
+    "id": "fb-013",
+    "name": "Navy knit short-sleeve top",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Navy",
+    "description": "Fine-knit crewneck tee",
+    "source": "facebook",
+    "fb_id": "fb-013",
+    "swatch": [
+      "#1f2c4f"
+    ]
+  },
+  {
+    "id": "fb-014",
+    "name": "Royal blue mock-neck top",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Royal blue",
+    "description": "Long-sleeve mock-turtleneck knit",
+    "source": "facebook",
+    "fb_id": "fb-014",
+    "swatch": [
+      "#2b4fc4"
+    ]
+  },
+  {
+    "id": "fb-015",
+    "name": "Lavender mock-neck top",
+    "size": "M",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Lavender",
+    "description": "Long-sleeve mock-turtleneck knit",
+    "source": "facebook",
+    "fb_id": "fb-015",
+    "swatch": [
+      "#c4b3e3"
+    ]
+  },
+  {
+    "id": "fb-016",
+    "name": "Mustard polka-dot jumpsuit",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Dresses & Jumpsuits",
+    "department": "Women's",
+    "color": "Mustard/white",
+    "description": "Sleeveless button-front wide-leg jumpsuit",
+    "source": "facebook",
+    "fb_id": "fb-016",
+    "swatch": [
+      "#d1a12c",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-017",
+    "name": "Pink unicorn fleece pajama pants",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Sleepwear",
+    "department": "Women's",
+    "color": "Pink",
+    "description": "Plush jogger PJ pants with unicorn print",
+    "source": "facebook",
+    "fb_id": "fb-017",
+    "swatch": [
+      "#ec8fb0"
+    ]
+  },
+  {
+    "id": "fb-018",
+    "name": "Heather blue V-neck tee",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Heather blue",
+    "description": "Short-sleeve notch V-neck tee",
+    "source": "facebook",
+    "fb_id": "fb-018",
+    "swatch": [
+      "#7d93b8"
+    ]
+  },
+  {
+    "id": "fb-019",
+    "name": "Black leggings",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Black",
+    "description": "High-waist full-length leggings",
+    "source": "facebook",
+    "fb_id": "fb-019",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-020",
+    "name": "Bold abstract print button-up",
+    "size": "XL",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Multicolor",
+    "description": "Long-sleeve shirt with vivid dot-and-swirl art print",
+    "source": "facebook",
+    "fb_id": "fb-020",
+    "swatch": [
+      "#e9a23b"
+    ]
+  },
+  {
+    "id": "fb-021",
+    "name": "Black maternity joggers",
+    "size": "XL",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Black",
+    "description": "Over-belly panel jogger pants",
+    "source": "facebook",
+    "fb_id": "fb-021",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-022",
+    "name": "Mauve striped romper",
+    "size": "XL",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Dresses & Jumpsuits",
+    "department": "Women's",
+    "color": "Mauve/white",
+    "description": "SO short-sleeve V-neck romper with elastic waist",
+    "source": "facebook",
+    "fb_id": "fb-022",
+    "swatch": [
+      "#b78a9c",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-023",
+    "name": "Pink striped V-neck tee",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Tops",
+    "department": "Women's",
+    "color": "Pink/white",
+    "description": "Short-sleeve striped tee",
+    "source": "facebook",
+    "fb_id": "fb-023",
+    "swatch": [
+      "#ec8fb0",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-024",
+    "name": "Medium wash capri jeans",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Bottoms",
+    "department": "Women's",
+    "color": "Medium blue",
+    "description": "Cropped capri jeans with side-slit hem",
+    "source": "facebook",
+    "fb_id": "fb-024",
+    "swatch": [
+      "#4f78b0"
+    ]
+  },
+  {
+    "id": "fb-025",
+    "name": "Black sleeveless formal dress (NWT)",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Dresses & Jumpsuits",
+    "department": "Women's",
+    "color": "Black",
+    "description": "Sleeveless column formal dress, new with tags",
+    "source": "facebook",
+    "fb_id": "fb-025",
+    "swatch": [
+      "#1f1f22"
+    ]
+  },
+  {
+    "id": "fb-026",
+    "name": "Lavender floral jacquard formal dress (NWT)",
+    "size": "L",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Dresses & Jumpsuits",
+    "department": "Women's",
+    "color": "Lavender/white",
+    "description": "Strapless floral jacquard formal dress, new with tags",
+    "source": "facebook",
+    "fb_id": "fb-026",
+    "swatch": [
+      "#c4b3e3",
+      "#f2f1ee"
+    ]
+  },
+  {
+    "id": "fb-027",
+    "name": "Gray check suit jacket",
+    "size": "",
+    "price": "",
+    "image": "",
+    "depop": "",
+    "added": "2026-10-17",
+    "sold": false,
+    "category": "Outerwear",
+    "department": "Men's",
+    "color": "Gray",
+    "description": "Two-button sport coat, small check pattern",
+    "source": "facebook",
+    "fb_id": "fb-027",
+    "swatch": [
+      "#8d8f94"
+    ]
+  }
 ]

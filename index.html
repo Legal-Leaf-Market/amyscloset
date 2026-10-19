@@ -49,6 +49,7 @@ body {
   padding-inline: 16px;
 }
 img { max-width: 100%; }
+[hidden] { display: none !important; }
 a { color: inherit; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--thread); outline-offset: 3px; border-radius: 4px; }
 h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.15; text-wrap: balance; margin: 0; }
@@ -152,6 +153,25 @@ section.block { padding-block: 72px; border-top: 1px solid var(--line); }
 .viewer p { color: #fff; text-align: center; margin-top: 10px; font-weight: 600; }
 .viewer .close { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0,0,0,0.55); color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; }
 .rack-empty { color: var(--ink-soft); grid-column: 1 / -1; }
+.filters { display: grid; gap: 12px; margin-bottom: 24px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 600 0.92rem/1 var(--body); padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.chip .n { font: 500 0.78rem/1 var(--mono); opacity: 0.7; margin-left: 4px; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.filter-row .label { font: 500 0.78rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.filter-row label { display: flex; align-items: center; gap: 8px; font: 500 0.92rem/1 var(--mono); color: var(--ink-soft); }
+.filter-row select { font: 500 0.95rem/1.2 var(--body); color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.count { font: 500 0.85rem/1.3 var(--mono); color: var(--ink-soft); }
+.more { display: flex; justify-content: center; margin: -20px 0 48px; }
+.ph { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 5; overflow: hidden; }
+.ph .tagcard { position: relative; display: grid; gap: 6px; justify-items: center; text-align: center; background: var(--card); color: var(--ink); padding: 18px 20px; border-radius: 8px; max-width: 78%; box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+.ph .tagcard svg { width: 34px; height: 34px; color: var(--ink-soft); }
+.ph .tagcard span { font: 500 0.78rem/1.35 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+.ph a { font: 600 0.85rem/1 var(--body); color: var(--thread); text-decoration: none; }
+.item .desc { color: var(--ink-soft); font-size: 0.95rem; }
+.item .when { font: 400 0.8rem/1 var(--mono); color: var(--ink-soft); }
+.item .badge { justify-self: start; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 8px; border-radius: 4px; background: var(--tag); color: var(--tag-ink); }
 .item .buy:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 /* Love Chapel */
@@ -288,11 +308,23 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
       <div class="head">
         <span class="eyebrow">Shop</span>
         <h2>Fresh on the rack</h2>
-        <p class="lede">A few pieces from this week. New donations are inspected and hung every week, so follow along to catch them first.</p>
+        <p class="lede">Everything we've hung up lately, newest first. In-store pieces sell fast, so message us to check that something is still here before you drive over.</p>
       </div>
-      <div class="rack" id="rack" aria-label="Fresh on the rack" aria-live="polite">
+      <div class="filters" id="filters" hidden>
+        <div class="chips" id="dept-chips" role="group" aria-label="Department"></div>
+        <div class="filter-row">
+          <span class="label">Size</span>
+          <div class="chips" id="size-chips" role="group" aria-label="Size"></div>
+          <label for="cat-select">Type
+            <select id="cat-select"><option value="">Everything</option></select>
+          </label>
+        </div>
+        <span class="count" id="rack-count" aria-live="polite"></span>
+      </div>
+      <div class="rack" id="rack" aria-label="Fresh on the rack">
         <p class="rack-empty">Loading this week's pieces…</p>
       </div>
+      <div class="more" id="more" hidden><button class="btn ghost" type="button" id="more-btn">Show more</button></div>
       <div class="shop-links">
         <a class="shop-card js-store" href="https://www.facebook.com/search/top?q=Amy%27s%20Closet%20Columbus%20Indiana" target="_blank" rel="noopener">
           <span class="go">DEPOP →</span>
@@ -358,18 +390,73 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
     // Fresh on the rack: items come from products.json (edited with admin.html).
     var rack = document.getElementById("rack");
     function esc(t) { var d = document.createElement("div"); d.textContent = t == null ? "" : String(t); return d.innerHTML; }
+    var HANGER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5a2 2 0 1 1 2-2"/><path d="M12 6.5v1.5L2.8 15.2a1.3 1.3 0 0 0 .8 2.3h16.8a1.3 1.3 0 0 0 .8-2.3L12 8"/></svg>';
+    var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    function shortDate(iso) { var m = /^(\d{4})-(\d\d)-(\d\d)/.exec(iso || ""); return m ? MONTHS[+m[2] - 1] + " " + (+m[3]) : ""; }
+    function photo(p) {
+      if (p.image) {
+        return '<button class="zoom" type="button" data-full="' + esc(p.image) + '" data-name="' + esc(p.name) + '" aria-label="View larger photo of ' + esc(p.name) + '">' +
+          '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" width="1125" height="1406"></button>';
+      }
+      var sw = (p.swatch && p.swatch.length ? p.swatch : ["#c9c4b8"]);
+      var bg = sw.length > 1 ? "linear-gradient(135deg," + sw.join(",") + ")" : sw[0];
+      return '<div class="ph" style="background:' + esc(bg) + '">' +
+        '<div class="tagcard">' + HANGER + '<span>' + esc(p.color || "") + '</span>' +
+        '<a href="' + esc(LINKS.facebook) + '" target="_blank" rel="noopener">See photo on Facebook →</a></div></div>';
+    }
     function card(p) {
-      var meta = p.size ? "Size " + esc(p.size) : "";
+      var meta = p.size ? "Size " + esc(p.size) : "Size: ask us";
       var price = p.price ? "$" + esc(p.price) : "Ask us";
       var link = p.depop || LINKS.facebook;
       var label = p.depop ? "Buy on Depop →" : "Message to buy →";
-      return '<article class="item">' +
-        '<button class="zoom" type="button" data-full="' + esc(p.image) + '" data-name="' + esc(p.name) + '" aria-label="View larger photo of ' + esc(p.name) + '">' +
-        '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" width="1125" height="1406"></button>' +
-        '<div class="item-body"><h3>' + esc(p.name) + '</h3>' +
+      var nwt = /\(NWT\)/.test(p.name);
+      var name = p.name.replace(/\s*\(NWT\)/, "");
+      return '<article class="item">' + photo(p) +
+        '<div class="item-body">' + (nwt ? '<span class="badge">New with tags</span>' : '') +
+        '<h3>' + esc(name) + '</h3>' +
+        (p.description ? '<p class="desc">' + esc(p.description) + '</p>' : '') +
         '<div class="meta"><span>' + meta + '</span><span class="price">' + price + '</span></div>' +
+        (p.added ? '<span class="when">Hung ' + esc(shortDate(p.added)) + '</span>' : '') +
         '<a class="buy" href="' + esc(link) + '" target="_blank" rel="noopener">' + label + '</a></div></article>';
     }
+
+    // Filters
+    var DEPTS = ["Women's", "Kids", "Men's", "Shoes & Accessories"];
+    var SIZES = ["S", "M", "L", "XL"];
+    var PAGE = 12;
+    var all = [], state = { dept: "", size: "", cat: "", shown: PAGE };
+    function sizesOf(p) { return String(p.size || "").toUpperCase().split("/").map(function (x) { return x.trim(); }); }
+    function matches(p) {
+      return (!state.dept || p.department === state.dept) &&
+        (!state.size || sizesOf(p).indexOf(state.size) !== -1) &&
+        (!state.cat || p.category === state.cat);
+    }
+    function chip(group, value, text, n) {
+      var on = state[group] === value;
+      return '<button class="chip" type="button" data-group="' + group + '" data-value="' + esc(value) + '" aria-pressed="' + on + '">' +
+        esc(text) + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button>';
+    }
+    function renderFilters() {
+      var count = function (fn) { return all.filter(fn).length; };
+      document.getElementById("dept-chips").innerHTML = chip("dept", "", "All", all.length) +
+        DEPTS.map(function (d) { var n = count(function (p) { return p.department === d; }); return n ? chip("dept", d, d, n) : ""; }).join("");
+      document.getElementById("size-chips").innerHTML = chip("size", "", "Any") +
+        SIZES.map(function (z) { return chip("size", z, z); }).join("");
+    }
+    function render() {
+      var list = all.filter(matches);
+      rack.innerHTML = list.length ? list.slice(0, state.shown).map(card).join("")
+        : '<p class="rack-empty">Nothing matches that right now. Try another size, or <a href="' + esc(LINKS.facebook) + '" target="_blank" rel="noopener">message us</a> with what you\'re looking for.</p>';
+      document.getElementById("rack-count").textContent = list.length ? "Showing " + Math.min(state.shown, list.length) + " of " + list.length : "";
+      document.getElementById("more").hidden = list.length <= state.shown;
+    }
+    document.getElementById("filters").addEventListener("click", function (e) {
+      var c = e.target.closest(".chip"); if (!c) return;
+      state[c.getAttribute("data-group")] = c.getAttribute("data-value"); state.shown = PAGE;
+      renderFilters(); render();
+    });
+    document.getElementById("cat-select").addEventListener("change", function () { state.cat = this.value; state.shown = PAGE; render(); });
+    document.getElementById("more-btn").addEventListener("click", function () { state.shown += PAGE; render(); });
     var viewer = document.getElementById("viewer");
     rack.addEventListener("click", function (e) {
       var z = e.target.closest(".zoom"); if (!z || !viewer.showModal) return;
@@ -383,9 +470,16 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 48px; display: f
     fetch("products.json", { cache: "no-cache" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (items) {
-        var live = items.filter(function (p) { return !p.sold; }).reverse();
-        rack.innerHTML = live.length ? live.map(card).join("")
-          : '<p class="rack-empty">Everything sold! New pieces go up every week. Check back soon.</p>';
+        // Pieces with photos first, then newest first.
+        all = items.filter(function (p) { return !p.sold; }).sort(function (a, b) {
+          return (b.image ? 1 : 0) - (a.image ? 1 : 0) || (b.added || "").localeCompare(a.added || "");
+        });
+        if (!all.length) { rack.innerHTML = '<p class="rack-empty">Everything sold! New pieces go up every week. Check back soon.</p>'; return; }
+        var cats = all.map(function (p) { return p.category; }).filter(function (c, i, arr) { return c && arr.indexOf(c) === i; }).sort();
+        document.getElementById("cat-select").innerHTML = '<option value="">Everything</option>' +
+          cats.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join("");
+        document.getElementById("filters").hidden = false;
+        renderFilters(); render();
       })
       .catch(function () {
         rack.innerHTML = '<p class="rack-empty">See our latest pieces on <a href="' + esc(LINKS.facebook) + '" target="_blank" rel="noopener">Facebook</a>.</p>';
