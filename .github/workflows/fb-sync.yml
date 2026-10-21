@@ -2,7 +2,7 @@ name: Sync items from Facebook
 
 on:
   schedule:
-    - cron: "17 11 * * *"   # daily, about 7am Indiana time
+    - cron: "*/30 * * * *"   # every 30 minutes (GitHub sometimes starts scheduled runs a few minutes late)
   workflow_dispatch:
     inputs:
       days:
@@ -31,7 +31,7 @@ jobs:
           FB_PAGE_ID: ${{ vars.FB_PAGE_ID || '100091049706849' }}
           FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          SYNC_DAYS: ${{ inputs.days || '45' }}
+          SYNC_DAYS: ${{ inputs.days || '3' }}   # scheduled runs only look back 3 days; use Run workflow for a bigger backfill
         run: python scripts/fb_sync.py
       - name: Commit and redeploy if anything changed
         env:
