@@ -41,8 +41,14 @@ DEPARTMENTS = ["Women's", "Kids", "Men's", "Shoes & Accessories", "Mixed"]
 def graph_get(path, **params):
     params["access_token"] = TOKEN
     url = path if path.startswith("http") else f"{GRAPH}/{path}?{urllib.parse.urlencode(params)}"
-    with urllib.request.urlopen(url, timeout=60) as r:
-        return json.load(r)
+    try:
+        with urllib.request.urlopen(url, timeout=60) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        # Show Facebook's own explanation (bad token, wrong Page ID, missing permission...).
+        body = e.read().decode("utf-8", "replace")
+        where = "next page" if path.startswith("http") else path
+        sys.exit(f"Facebook API error {e.code} on {where}: {body}")
 
 
 def fetch_posts():
@@ -60,8 +66,7 @@ def fetch_posts():
         nxt = page.get("paging", {}).get("next")
         if not nxt:
             break
-        with urllib.request.urlopen(nxt, timeout=60) as r:
-            page = json.load(r)
+        page = graph_get(nxt)
 
 
 def photo_ids(post):
