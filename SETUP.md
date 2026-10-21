@@ -59,7 +59,26 @@ Everything below is saved only on the phone that uses the Lister. Never paste th
 
 Instagram captions can't hold clickable links, so posts say "link in bio." Facebook posts include the Depop link.
 
-## 4. Things to confirm before launch
+## 4. Automatic daily sync from Facebook
+`.github/workflows/fb-sync.yml` runs every morning on GitHub's servers. It reads new photo posts
+from the Facebook Page through Facebook's official API. Each photo gets saved, touched up and added to the
+site. Then the site redeploys. Nothing has to be running on anyone's computer.
+
+Setup (once):
+1. Get the Page access token from section 3C, step 4. It's the same token the Lister uses.
+2. In GitHub, go to repo Settings, then Secrets and variables, then Actions, then **New repository secret**:
+   - `FB_PAGE_TOKEN`: the Page access token.
+   - `ANTHROPIC_API_KEY` (optional, recommended): an API key from console.anthropic.com. With it, Claude
+     looks at each photo and fills in the name, type, department, color, and the size and price from the
+     hang tag. It costs roughly a cent per photo. Without it, new items arrive as "New arrival" with
+     the size taken from the caption, and you fill in the rest in the Lister.
+3. To run it right away: go to the Actions tab, then "Sync items from Facebook", then **Run workflow**. Set "days" to 45
+   to backfill the last month and a half.
+
+Photos that match an item already on the site (same day, similar name) are attached to that item
+instead of creating a duplicate.
+
+## 5. Things to confirm before launch
 - The drop-off location and hours. The site currently says "message us on Facebook."
 - Sizes and prices for the Ghost Face sweatshirt and the Diamondback tee. Use Lister, then Remove, then re-add, or edit `products.json`.
 - That Love Chapel is fine with being named. They list their phone as 812-372-9421.

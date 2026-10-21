@@ -1,0 +1,47 @@
+name: Sync items from Facebook
+
+on:
+  schedule:
+    - cron: "17 11 * * *"   # daily, about 7am Indiana time
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "How many days back to look"
+        default: "45"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: fb-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install anthropic pillow
+      - name: Pull new Facebook photo posts
+        env:
+          FB_PAGE_ID: ${{ vars.FB_PAGE_ID || '100091049706849' }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SYNC_DAYS: ${{ inputs.days || '45' }}
+        run: python scripts/fb_sync.py
+      - name: Commit and redeploy if anything changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add products.json images/products
+          if git diff --cached --quiet; then echo "No new items."; exit 0; fi
+          git config user.name "amyscloset-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Sync new items from Facebook"
+          git push
+          # Pushes made with the workflow token don't trigger other workflows, so start the deploy directly.
+          gh workflow run pages.yml --ref "${GITHUB_REF_NAME}"
