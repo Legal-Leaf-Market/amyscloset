@@ -30,7 +30,8 @@ PRODUCTS = os.path.join(ROOT, "products.json")
 IMG_DIR = os.path.join(ROOT, "images", "products")
 GRAPH = "https://graph.facebook.com/v23.0"
 PAGE_ID = os.environ.get("FB_PAGE_ID", "100091049706849")
-TOKEN = os.environ.get("FB_PAGE_TOKEN", "")
+# Tolerate stray spaces, newlines or quotes pasted along with the secret.
+TOKEN = os.environ.get("FB_PAGE_TOKEN", "").strip().strip('"').strip("'").strip()
 DAYS = int(os.environ.get("SYNC_DAYS", "45"))
 
 CATEGORIES = ["Tops", "Bottoms", "Dresses & Jumpsuits", "Outerwear", "Sleepwear", "Scrubs",
