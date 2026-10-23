@@ -1,0 +1,5 @@
+# Built at deploy time by scripts/build_site.py
+/items/
+/feeds/
+/checkout.html
+__pycache__/

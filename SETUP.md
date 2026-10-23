@@ -78,7 +78,30 @@ Setup (once):
 Photos that match an item already on the site (same day, similar name) are attached to that item
 instead of creating a duplicate.
 
-## 5. Things to confirm before launch
+## 5. Instagram Shop (@amyscloset.site) from the site's feed
+The site is the source of truth. Every deploy runs `scripts/build_site.py`, which publishes:
+- `feeds/meta-catalog.csv`: the Meta catalog feed. It only includes items with a photo and a price.
+  Sold items stay as "out of stock" for 30 days, then drop out. The deploy's summary page lists what was left out and why.
+- `items/<id>.html`: one page per item, with product tags Meta can read. This is each row's `link`.
+- `checkout.html`: the checkout URL target. It forwards the shopper to the item's page.
+
+How items get marked sold, so they show "out of stock" on Instagram:
+- The Facebook sync (every 30 minutes) marks an item sold when its Facebook photo's caption or a comment says
+  **SOLD**, or when the photo is deleted from the Page.
+- In the Lister: tap **Mark sold**.
+- Or add the item id to `sold.json` (a JSON list, e.g. `["red-bird-cardigan"]`).
+
+In Commerce Manager (shop id 1555894583241958):
+1. Go to Catalog "Amy's Closet", then Data sources, then Add items, then Data feed, then Scheduled feed. Paste
+   `https://legal-leaf-market.github.io/amyscloset/feeds/meta-catalog.csv`, choose **Hourly** and currency **USD**.
+   If the site moves to its own domain, set a repository variable `SITE_URL` (for example `https://amyscloset.site/`)
+   and update the feed URL.
+2. Checkout URL: `https://legal-leaf-market.github.io/amyscloset/checkout.html`
+3. Shipping profile: your decision, either rates or local pickup.
+4. Sales channels: connect **@amyscloset.site**.
+5. Publish the shop once the catalog has items and review has passed.
+
+## 6. Things to confirm before launch
 - The drop-off location and hours. The site currently says "message us on Facebook."
 - Sizes and prices for the Ghost Face sweatshirt and the Diamondback tee. Use Lister, then Remove, then re-add, or edit `products.json`.
 - That Love Chapel is fine with being named. They list their phone as 812-372-9421.

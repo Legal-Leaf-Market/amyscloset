@@ -22,9 +22,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - id: pages
+        uses: actions/configure-pages@v5
         with:
           enablement: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pillow
+      - name: Build item pages and the Meta catalog feed
+        env:
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+        run: python scripts/build_site.py
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .

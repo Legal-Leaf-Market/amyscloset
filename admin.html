@@ -417,7 +417,7 @@ a { color: inherit; }
     updateProducts(function (items) {
       for (var i = items.length - 1; i >= 0; i--) {
         if (items[i].id !== id) continue;
-        if (act === "sold") items[i].sold = !items[i].sold;
+        if (act === "sold") { items[i].sold = !items[i].sold; if (items[i].sold) items[i].sold_at = new Date().toISOString().slice(0, 10); else delete items[i].sold_at; }
         if (act === "remove") items.splice(i, 1);
       }
     }, act === "sold" ? "Update sold status" : "Remove item").then(refresh).catch(function (err) { alertInline(li, err.message); });

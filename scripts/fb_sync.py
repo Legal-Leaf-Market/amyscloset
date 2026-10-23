@@ -19,6 +19,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -50,6 +51,62 @@ def graph_get(path, **params):
         body = e.read().decode("utf-8", "replace")
         where = "next page" if path.startswith("http") else path
         sys.exit(f"Facebook API error {e.code} on {where}: {body}")
+
+
+def graph_try(path, **params):
+    """Like graph_get, but returns (data, error_dict) instead of stopping the run."""
+    params["access_token"] = TOKEN
+    url = f"{GRAPH}/{path}?{urllib.parse.urlencode(params)}"
+    try:
+        with urllib.request.urlopen(url, timeout=60) as r:
+            return json.load(r), None
+    except urllib.error.HTTPError as e:
+        try:
+            return None, json.loads(e.read().decode("utf-8", "replace")).get("error", {})
+        except ValueError:
+            return None, {"code": e.code, "message": str(e)}
+
+
+SOLD_RE = re.compile(r"\bsold\b", re.I)
+
+
+def photo_says_sold(data):
+    texts = [data.get("name") or ""] + [c.get("message") or "" for c in data.get("comments", {}).get("data", [])]
+    return any(SOLD_RE.search(t) for t in texts)
+
+
+def check_sold(items):
+    """Mark items sold when Amy marks them on Facebook.
+
+    An item counts as sold when its Facebook photo's caption or a comment on it says "SOLD",
+    or when the photo has been deleted from the Page.
+    """
+    if os.environ.get("FIXTURE"):
+        return 0
+    open_items = [it for it in items if it.get("fb_photo_id") and not it.get("sold")]
+    marked = 0
+    fields = "name,comments.limit(50){message}"
+    for i in range(0, len(open_items), 50):
+        chunk = open_items[i:i + 50]
+        data, err = graph_try("", ids=",".join(it["fb_photo_id"] for it in chunk), fields=fields)
+        if err:  # one deleted photo fails the whole batch; check each one on its own
+            data = {}
+            for it in chunk:
+                one, e1 = graph_try(it["fb_photo_id"], fields=fields)
+                if one:
+                    data[it["fb_photo_id"]] = one
+                elif e1.get("code") == 100:  # "does not exist": the photo was deleted
+                    data[it["fb_photo_id"]] = {"deleted": True}
+                else:
+                    print(f"  couldn't check {it['id']}: {e1.get('message')}")
+        for it in chunk:
+            d = data.get(it["fb_photo_id"])
+            if d and (d.get("deleted") or photo_says_sold(d)):
+                it["sold"] = True
+                it["sold_at"] = datetime.now(timezone.utc).date().isoformat()
+                marked += 1
+                print(f"  marked sold: {it['name']} ({'photo deleted' if d.get('deleted') else 'says SOLD'})")
+    return marked
 
 
 def fetch_posts():
@@ -244,11 +301,13 @@ def main():
                 print(f"  added: {label['name']} ({posted})")
             known.add(pid)
 
+    sold = check_sold(items)
+
     items.sort(key=lambda p: p.get("added", ""))
     with open(PRODUCTS, "w") as f:
         json.dump(items, f, indent=2, ensure_ascii=False)
         f.write("\n")
-    print(f"Done: {added} new items, {attached} photos attached to existing items.")
+    print(f"Done: {added} new items, {attached} photos attached to existing items, {sold} marked sold.")
 
 
 if __name__ == "__main__":
