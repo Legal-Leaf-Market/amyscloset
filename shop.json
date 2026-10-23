@@ -1,0 +1,4 @@
+{
+  "shipping_flat_rate_usd": null,
+  "_note": "Buyer pays shipping. Set shipping_flat_rate_usd (e.g. 6.50) to add a flat US shipping price to the Meta catalog feed and the item pages; leave null to quote shipping per order."
+}

@@ -29,10 +29,12 @@ SITE_URL = os.environ.get("SITE_URL", "https://legal-leaf-market.github.io/amysc
 FACEBOOK = "https://www.facebook.com/profile.php?id=100091049706849"
 SOLD_KEEP_DAYS = 30
 BRAND = "Amy's Closet"
+SHOP = json.load(open(os.path.join(ROOT, "shop.json"))) if os.path.exists(os.path.join(ROOT, "shop.json")) else {}
+SHIP_RATE = SHOP.get("shipping_flat_rate_usd")
 
 FEED_COLUMNS = ["id", "title", "description", "availability", "condition", "price", "link", "image_link",
                 "additional_image_link", "brand", "google_product_category", "size", "color", "gender",
-                "age_group"]
+                "age_group"] + (["shipping"] if SHIP_RATE else [])
 
 # Google product taxonomy ids (Meta accepts these): Apparel & Accessories, Clothing, Shoes.
 GOOGLE_CATEGORY = {"Shoes": "187", "Accessories": "166"}
@@ -94,6 +96,7 @@ def feed_row(it):
         "color": it.get("color", ""),
         "gender": {"Women's": "female", "Men's": "male"}.get(dept, "unisex"),
         "age_group": "kids" if dept == "Kids" else "adult",
+        **({"shipping": f"US::Standard:{float(SHIP_RATE):.2f} USD"} if SHIP_RATE else {}),
     }
 
 
@@ -188,6 +191,7 @@ a:focus-visible {{ outline: 3px solid var(--thread); outline-offset: 3px; }}
       <span class="price">{price_text}</span>
       <p class="desc">{desc_short}</p>
       <div class="ctas">{ctas}</div>
+      <p class="note"><strong>We ship.</strong> {ship_text}</p>
       <p class="note">Every piece is donated and inspected three times before it's listed. All sales final.
         10% of every sale goes to Love Chapel's food pantry in Columbus, Indiana.</p>
     </div>
@@ -241,6 +245,8 @@ def item_page(it):
                else '<div class="ph">Photo coming soon</div>'),
         facts="".join(facts), price_text=f"${price}" if price else "Ask us for the price",
         desc_short=e(it.get("description") or ""), ctas=ctas,
+        ship_text=(f"Shipping is ${float(SHIP_RATE):.2f}, paid by the buyer." if SHIP_RATE
+                   else "Shipping is paid by the buyer. Message us for a quote, or pick it up in the store."),
     )
 
 

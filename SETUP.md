@@ -97,7 +97,10 @@ In Commerce Manager (shop id 1555894583241958):
    If the site moves to its own domain, set a repository variable `SITE_URL` (for example `https://amyscloset.site/`)
    and update the feed URL.
 2. Checkout URL: `https://legal-leaf-market.github.io/amyscloset/checkout.html`
-3. Shipping profile: your decision, either rates or local pickup.
+3. Shipping profile: **buyer pays shipping**. Create a US shipping profile with one flat rate.
+   A good starting point is the price of a USPS Ground Advantage label for a typical bagged item
+   (under 1 lb). Put the same number in `shop.json` as `shipping_flat_rate_usd`. The feed then carries it
+   on every item, and the item pages show it.
 4. Sales channels: connect **@amyscloset.site**.
 5. Publish the shop once the catalog has items and review has passed.
 
