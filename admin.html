@@ -272,6 +272,12 @@ a { color: inherit; }
       return r.json().then(function (j) { if (!r.ok || j.error) throw new Error((j.error && j.error.message) || r.status); return j; });
     });
   }
+  function graphGet(path, params) {
+    var q = new URLSearchParams(Object.assign({}, params, { access_token: S.pagetoken }));
+    return fetch(GRAPH + path + "?" + q).then(function (r) {
+      return r.json().then(function (j) { if (!r.ok || j.error) throw new Error((j.error && j.error.message) || r.status); return j; });
+    });
+  }
   function postFacebook(caption, blob, link) {
     var msg = caption.replace("link in bio", "here: " + link);
     return graph("/" + S.page + "/photos", { message: link ? msg : caption }, blob);
@@ -285,10 +291,53 @@ a { color: inherit; }
         return new Promise(function (res) { setTimeout(res, 15000); }).then(function () { return waitForUrl(url, tries - 1); });
       });
   }
-  function postInstagram(caption, imageUrl) {
+  // ---------- Instagram Shop product tags ----------
+  // The catalog reads the site's feed hourly and Meta reviews each new item, so a brand-new item
+  // usually can't be tagged right away. Those posts go up untagged and get a "Tag on Instagram" button on the rack.
+  var catalogId = null;
+  function getCatalogId() {
+    if (catalogId) return Promise.resolve(catalogId);
+    return graphGet("/" + S.ig + "/available_catalogs", { fields: "catalog_id,catalog_name" }).then(function (j) {
+      if (!j.data || !j.data.length) throw new Error("no catalog is connected to the Instagram account yet");
+      return (catalogId = j.data[0].catalog_id);
+    });
+  }
+  // Resolves to the catalog product_id for an item, or throws a reason it can't be tagged yet.
+  function findProduct(itemId) {
+    return getCatalogId()
+      .then(function (cid) { return graphGet("/" + S.ig + "/catalog_product_search", { catalog_id: cid, q: itemId }); })
+      .then(function (j) {
+        var hit = (j.data || []).filter(function (p) { return p.retailer_id === itemId; })[0];
+        if (!hit) throw new Error("it isn't in the Instagram catalog yet (the feed updates hourly)");
+        if (hit.review_status && hit.review_status !== "approved") throw new Error("Meta's review of it is " + hit.review_status);
+        return hit.product_id;
+      });
+  }
+  // Tag near the bottom middle so the dot sits on the garment, not the face.
+  function productTags(productId) { return JSON.stringify([{ product_id: productId, x: 0.5, y: 0.7 }]); }
+
+  // Resolves to { id, tagged } for the published post.
+  function postInstagram(caption, imageUrl, itemId) {
+    var tagged = false;
     return waitForUrl(imageUrl, 20)
-      .then(function () { return graph("/" + S.ig + "/media", { image_url: imageUrl, caption: caption }); })
-      .then(function (c) { return graph("/" + S.ig + "/media_publish", { creation_id: c.id }); });
+      .then(function () {
+        return findProduct(itemId).then(function (pid) { tagged = true; return pid; }, function (err) {
+          log("Posting without a shop tag: " + err.message + ". Use Tag on Instagram on the rack later.", "info");
+          return null;
+        });
+      })
+      .then(function (pid) {
+        var params = { image_url: imageUrl, caption: caption };
+        if (pid) params.product_tags = productTags(pid);
+        return graph("/" + S.ig + "/media", params);
+      })
+      .then(function (c) { return graph("/" + S.ig + "/media_publish", { creation_id: c.id }); })
+      .then(function (m) { return { id: m.id, tagged: tagged }; });
+  }
+  function tagExistingPost(mediaId, itemId) {
+    return findProduct(itemId).then(function (pid) {
+      return graph("/" + mediaId + "/product_tags", { updated_tags: productTags(pid) });
+    });
   }
 
   // ---------- add item ----------
@@ -329,8 +378,13 @@ a { color: inherit; }
       .then(function () {
         if (!wantIg) return;
         log("Waiting for the website to update, then posting to Instagram…");
-        return postInstagram(caption, S.site + item.image).then(function () { log("Posted to Instagram.", "ok"); })
-          .catch(function (err) { log("Instagram post failed: " + err.message, "bad"); });
+        return postInstagram(caption, S.site + item.image, item.id).then(function (post) {
+          log(post.tagged ? "Posted to Instagram with a shop tag." : "Posted to Instagram.", "ok");
+          // Remember the post so it can be tagged once the item is in the catalog.
+          return updateProducts(function (items) { items.forEach(function (it) {
+            if (it.id === item.id) { it.ig_media_id = post.id; it.ig_tagged = post.tagged; }
+          }); }, "Save Instagram post for " + name).catch(function () {});
+        }).catch(function (err) { log("Instagram post failed: " + err.message, "bad"); });
       })
       .then(function () {
         $("add-form").reset(); photoBlob = null; $("preview").hidden = true; captionTouched = false;
@@ -364,6 +418,7 @@ a { color: inherit; }
           '<div class="actions">' +
           '<button class="ghost" type="button" data-act="sold">' + (it.sold ? "Relist" : "Mark sold") + '</button>' +
           '<button class="ghost" type="button" data-act="edit">Edit details</button>' +
+          (it.ig_media_id && !it.ig_tagged && !it.sold ? '<button class="ghost" type="button" data-act="igtag">Tag on Instagram</button>' : '') +
           '<button class="ghost" type="button" data-act="photo">' + (it.image ? "Change photo" : "Add photo") + '</button>' +
           '<button class="ghost" type="button" data-act="remove">Remove</button>' +
           '</div></div></li>';
@@ -407,6 +462,15 @@ a { color: inherit; }
           it.size = size; it.price = price ? Number(price).toFixed(2) : ""; it.depop = url;
         }); }, "Update item: " + (cur.name || id)).then(refresh).catch(function (err) { alertInline(li, err.message); });
       });
+      return;
+    }
+    if (act === "igtag") {
+      var post = rackCache[id] || {};
+      btn.disabled = true; alertInline(li, "Looking it up in the Instagram catalog…");
+      tagExistingPost(post.ig_media_id, id)
+        .then(function () { return updateProducts(function (items) { items.forEach(function (it) { if (it.id === id) it.ig_tagged = true; }); }, "Tag Instagram post for " + id); })
+        .then(refresh)
+        .catch(function (err) { btn.disabled = false; alertInline(li, "Can't tag it yet: " + err.message + "."); });
       return;
     }
     if (act === "photo") { photoTarget = { id: id, li: li }; $("photo-pick").value = ""; $("photo-pick").click(); return; }

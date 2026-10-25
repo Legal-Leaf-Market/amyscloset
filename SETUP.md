@@ -49,8 +49,10 @@ Everything below is saved only on the phone that uses the Lister. Never paste th
 1. Go to developers.facebook.com, then My Apps, then Create app, then Other, then **Business**. Name it "Amy's Closet Lister".
 2. Add the products **Facebook Login for Business** and **Instagram**.
 3. Open **Tools, then Graph API Explorer**, pick the app, then *Get Page Access Token*. Grant
-   `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `instagram_basic` and
-   `instagram_content_publish`, and select the Amy's Closet Page.
+   `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `instagram_basic`,
+   `instagram_content_publish`, `instagram_shopping_tag_products` and `catalog_management`, and select
+   the Amy's Closet Page. The last two let the Lister tag Instagram posts with the shop item.
+   If you made the token before these were added, make a new one and paste it into Settings.
 4. Turn it into a long-lived token. Use the Access Token Debugger, then **Extend Access Token**. Then call
    `GET /me/accounts` with the extended token. The `access_token` shown next to the Page is a
    Page token that doesn't expire. Paste it into Settings as the Page access token, and paste `id` as the Page ID.
@@ -103,6 +105,11 @@ In Commerce Manager (shop id 1555894583241958):
    on every item, and the item pages show it.
 4. Sales channels: connect **@amyscloset.site**.
 5. Publish the shop once the catalog has items and review has passed.
+
+**Product tags on Instagram posts.** Once the shop is approved, the Lister tags each Instagram post
+with its shop item, so people can tap the post and buy. A brand-new item usually isn't taggable yet:
+the catalog reads the feed hourly, and Meta reviews each item. Those posts go up untagged, and the item
+gets a **Tag on Instagram** button on the rack. Tap it an hour or two later to add the tag to the post.
 
 ## 6. Things to confirm before launch
 - The drop-off location and hours. The site currently says "message us on Facebook."
