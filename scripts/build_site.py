@@ -6,7 +6,7 @@ including the one the Facebook sync triggers, publishes a fresh feed. Nothing it
 Outputs:
   items/<id>.html          one page per item: photo, price, size, buy button, Open Graph + schema.org tags
   feeds/meta-catalog.csv   Meta catalog data feed (Commerce Manager > Catalog > Data sources > scheduled feed)
-  checkout.html            target for Meta's "checkout URL"; forwards to the item's page
+  checkout.html            target for Meta's "checkout URL"; shows the order, or forwards a single item to its page
 
 Sold items stay in the feed as "out of stock" for 30 days after they sell, then drop out.
 sold.json (optional) is a list of item ids to treat as sold without editing products.json.
@@ -250,26 +250,182 @@ def item_page(it):
     )
 
 
-CHECKOUT = """<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Checkout · Amy's Closet</title>
-<style>body{margin:0;padding:40px 16px;font:400 1.05rem/1.6 system-ui,sans-serif;background:#f4f5f7;color:#1d2740}
-@media (prefers-color-scheme: dark){body{background:#121725;color:#e8ecf5}} a{color:inherit;font-weight:600}</style>
-</head><body>
-<p id="msg">Taking you to your item…</p>
+# Meta sends shoppers to checkout.html?products=<id>:<qty>,<id>:<qty>[&coupon=CODE]. The page shows the
+# order from the item data baked in below. One available item goes straight to its item page.
+CHECKOUT = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Your order · Amy's Closet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --paper: #f4f5f7; --card: #ffffff; --ink: #1d2740; --ink-soft: #4b5672; --line: #d9dde6;
+  --tag: #efe3c4; --tag-ink: #4a3b14; --thread: #c9881c;
+  --display: "Young Serif", Georgia, serif; --body: "Figtree", system-ui, sans-serif; --mono: "DM Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --paper: #121725; --card: #1a2133; --ink: #e8ecf5; --ink-soft: #a7b0c6; --line: #2c3550;
+    --tag: #3a321d; --tag-ink: #f1e3bd; --thread: #e2a73f; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.6 var(--body); padding-inline: 16px; }
+.wrap { max-width: 640px; margin-inline: auto; padding-block: 20px 64px; display: grid; gap: 20px; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-size: 1.4rem; text-decoration: none; color: inherit; }
+.back { color: var(--ink-soft); font-weight: 500; }
+h1 { font: 400 clamp(1.8rem, 5vw, 2.4rem)/1.15 var(--display); margin: 0; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 16px; }
+.lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.line { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; gap: 14px; align-items: start; }
+.line img, .line .ph { width: 84px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; background: var(--line); display: block; }
+.line .name { font-weight: 600; text-decoration: none; color: inherit; overflow-wrap: anywhere; }
+.line .meta { font: 400 0.85rem/1.4 var(--mono); color: var(--ink-soft); }
+.line .qty-note { font-size: 0.88rem; color: var(--tag-ink); background: var(--tag); border-radius: 6px; padding: 4px 8px; margin-top: 6px; display: inline-block; }
+.line .amt { font: 400 1.2rem/1.2 var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.line .depop { display: inline-block; margin-top: 8px; font-weight: 600; font-size: 0.92rem; }
+.sums { display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 14px; font-variant-numeric: tabular-nums; }
+.sums div { display: flex; justify-content: space-between; gap: 12px; }
+.sums .total { font: 400 1.4rem/1.3 var(--display); padding-top: 6px; }
+.notice { background: var(--tag); color: var(--tag-ink); border-radius: 10px; padding: 12px 14px; font-size: 0.95rem; }
+.notice p { margin: 0; } .notice p + p { margin-top: 6px; }
+.btn { display: flex; justify-content: center; text-align: center; padding: 16px 24px; border-radius: 999px; font: 600 1.05rem/1.2 var(--body); text-decoration: none; background: var(--ink); color: var(--paper); border: 0; cursor: pointer; width: 100%; }
+.btn.alt { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
+.how { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
+.fine { font-size: 0.9rem; color: var(--ink-soft); margin: 0; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--thread); outline-offset: 3px; }
+@media (max-width: 420px) { .line { grid-template-columns: 64px minmax(0, 1fr); } .line img, .line .ph { width: 64px; } .line .amt { grid-column: 2; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="index.html">Amy's Closet</a>
+    <a class="back" href="index.html#shop">← Back to the rack</a>
+  </header>
+  <h1>Your order</h1>
+  <div class="notice" id="notices" hidden></div>
+  <section class="card" id="cart" hidden>
+    <ul class="lines" id="lines"></ul>
+    <div class="sums">
+      <div><span>Items (<span id="count"></span>)</span><span id="subtotal"></span></div>
+      <div><span>Shipping (US)</span><span id="shipping"></span></div>
+      <div class="total"><span>Total</span><span id="total"></span></div>
+    </div>
+    <button class="btn" type="button" id="pay">Message us to buy this order</button>
+    <p class="how" id="how">We'll copy your order so you can paste it into the message. We reply with how to pay
+      and hold the pieces for you. You can also pick up in the store.</p>
+  </section>
+  <section class="card" id="empty" hidden>
+    <p style="margin:0">Nothing in this order is still available. New pieces go on the rack every week.</p>
+    <a class="btn alt" href="index.html#shop">See what's on the rack</a>
+  </section>
+  <p class="fine">Every piece is one of a kind, donated and inspected three times. All sales final.
+    10% of every sale goes to Love Chapel's food pantry in Columbus, Indiana.</p>
+</div>
 <script>
-  // Meta sends shoppers here as checkout.html?products=<id>:<qty>,<id>:<qty>
-  var raw = new URLSearchParams(location.search).get("products") || "";
-  var ids = raw.split(",").map(function (p) { return decodeURIComponent(p.split(":")[0]); }).filter(Boolean);
-  if (ids.length === 1) location.replace("items/" + encodeURIComponent(ids[0]) + ".html");
-  else if (ids.length > 1) {
-    document.getElementById("msg").innerHTML = "Your picks:";
-    ids.forEach(function (id) { var a = document.createElement("a"); a.href = "items/" + encodeURIComponent(id) + ".html";
-      a.textContent = id; var p = document.createElement("p"); p.appendChild(a); document.body.appendChild(p); });
-  } else location.replace("index.html#shop");
+(function () {
+  var ITEMS = __ITEMS__;
+  var SHIP = __SHIP__;
+  var FACEBOOK = __FACEBOOK__;
+  var $ = function (id) { return document.getElementById(id); };
+  function money(n) { return "$" + n.toFixed(2); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function dec(s) { try { return decodeURIComponent(s); } catch (e) { return s; } }
+
+  var params = new URLSearchParams(location.search);
+  // URLSearchParams decodes once; decode again in case Meta's value arrives double-encoded.
+  var raw = dec(params.get("products") || "");
+  var coupon = dec(params.get("coupon") || "").trim();
+  var asked = [], seen = {};
+  raw.split(",").forEach(function (part) {
+    part = part.trim(); if (!part) return;
+    var at = part.lastIndexOf(":");
+    var id = at > 0 ? part.slice(0, at) : part, qty = at > 0 ? parseInt(part.slice(at + 1), 10) : 1;
+    if (!(qty >= 1)) qty = 1;
+    if (seen[id]) { seen[id].qty += qty; return; }
+    asked.push(seen[id] = { id: id, qty: qty });
+  });
+  if (!asked.length) { location.replace("index.html#shop"); return; }
+
+  var lines = [], notes = [];
+  asked.forEach(function (a) {
+    var it = ITEMS[a.id];
+    if (!it) notes.push("One item in your order isn't in our shop anymore, so we left it out.");
+    else if (it.sold) notes.push(it.title + " has already sold, so we left it out. Sorry!");
+    else if (it.price == null) notes.push(it.title + " doesn't have a price yet. Message us about it.");
+    else lines.push({ id: a.id, it: it, more: a.qty > 1 });
+  });
+
+  if (lines.length === 1 && !lines[0].more && !notes.length && !coupon) {
+    location.replace("items/" + encodeURIComponent(lines[0].id) + ".html"); return;
+  }
+
+  if (coupon) notes.push("Coupon " + coupon + ": we don't take online coupon codes yet, so it isn't in this total.");
+  if (notes.length) {
+    var box = $("notices");
+    notes.forEach(function (n) { box.appendChild(el("p", null, n)); });
+    box.hidden = false;
+  }
+  if (!lines.length) { $("empty").hidden = false; return; }
+
+  var subtotal = 0;
+  lines.forEach(function (l) {
+    var it = l.it, li = el("li", "line"), href = "items/" + encodeURIComponent(l.id) + ".html";
+    var pic = el("a"); pic.href = href; pic.setAttribute("aria-hidden", "true"); pic.tabIndex = -1;
+    if (it.image) { var img = el("img"); img.src = it.image; img.alt = ""; img.loading = "lazy"; pic.appendChild(img); }
+    else pic.appendChild(el("div", "ph"));
+    var info = el("div"), name = el("a", "name", it.title); name.href = href;
+    info.appendChild(name);
+    info.appendChild(el("div", "meta", [it.size && "Size " + it.size, it.color, "Qty 1"].filter(Boolean).join(" · ")));
+    if (l.more) info.appendChild(el("span", "qty-note", "One of a kind, so there's just 1 of these."));
+    if (it.depop) { var d = el("a", "depop", "Buy this one on Depop →"); d.href = it.depop; d.rel = "noopener"; info.appendChild(d); }
+    li.appendChild(pic); li.appendChild(info); li.appendChild(el("span", "amt", money(it.price)));
+    $("lines").appendChild(li);
+    subtotal += it.price;
+  });
+  var ship = SHIP == null ? null : SHIP;
+  $("count").textContent = lines.length;
+  $("subtotal").textContent = money(subtotal);
+  $("shipping").textContent = ship == null ? "Quoted by message" : money(ship);
+  $("total").textContent = money(subtotal + (ship || 0)) + (ship == null ? " + shipping" : "");
+  $("cart").hidden = false;
+
+  var summary = ["Hi! I'd like to buy this order from Amy's Closet:"]
+    .concat(lines.map(function (l) { return "- " + l.it.title + (l.it.size ? " (size " + l.it.size + ")" : "") + ", " + money(l.it.price) + " [" + l.id + "]"; }))
+    .concat(["Shipping: " + (ship == null ? "please quote" : money(ship)), "Total: " + $("total").textContent]).join("\n");
+  $("pay").addEventListener("click", function () {
+    var go = function () { location.href = FACEBOOK; };
+    try {
+      navigator.clipboard.writeText(summary).then(function () {
+        $("pay").textContent = "Order copied. Opening Facebook…"; setTimeout(go, 700);
+      }, go);
+    } catch (e) { go(); }
+  });
+})();
 </script>
-</body></html>
+</body>
+</html>
 """
+
+
+def checkout_page(items):
+    data = {}
+    for it in items:
+        data[it["id"]] = {
+            "title": clean_name(it), "price": float(it["price"]) if it.get("price") else None,
+            "image": it.get("image") or "", "size": it.get("size") or "", "color": it.get("color") or "",
+            "depop": it.get("depop") or "", "sold": bool(it.get("sold")),
+        }
+    js = lambda v: json.dumps(v, ensure_ascii=False).replace("</", "<\\/")  # noqa: E731
+    return (CHECKOUT.replace("__ITEMS__", js(data))
+            .replace("__SHIP__", js(float(SHIP_RATE)) if SHIP_RATE else "null")
+            .replace("__FACEBOOK__", js(FACEBOOK)))
 
 
 def main():
@@ -281,7 +437,7 @@ def main():
         with open(os.path.join(ROOT, "items", f"{it['id']}.html"), "w") as f:
             f.write(item_page(it))
     with open(os.path.join(ROOT, "checkout.html"), "w") as f:
-        f.write(CHECKOUT)
+        f.write(checkout_page(items))
 
     rows, skipped = [], {}
     for it in items:
