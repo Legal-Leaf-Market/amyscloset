@@ -40,10 +40,10 @@ Everything below is saved only on the phone that uses the Lister. Never paste th
 4. Copy the token into Lister → Settings → GitHub key, then tap Save.
 
 **B. Instagram account**
-1. Create the account, for example @amyscloset. Then go to Settings, then Account type, then switch to **Business**.
+1. The account is **@amyscloset.site**. In the app, go to Settings, then Account type, then switch to **Business**.
 2. Link it to the Facebook Page: Meta Business Suite, then Settings, then Linked accounts, then Instagram.
 3. Bio: "Clothing thrift shop in Columbus, IN. Donated clothes, triple inspected. 10% of every sale
-   goes to Love Chapel's food pantry. Resellers welcome." Put the website or Depop shop as the bio link.
+   goes to Love Chapel's food pantry. Resellers welcome." Use the website, `https://legal-leaf-market.github.io/amyscloset/`, as the bio link.
 
 **C. Facebook and Instagram posting keys** (optional; skip this to post by hand):
 1. Go to developers.facebook.com, then My Apps, then Create app, then Other, then **Business**. Name it "Amy's Closet Lister".
