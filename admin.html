@@ -440,7 +440,7 @@ a { color: inherit; }
             : '<div class="thumb" style="background:' + esc((it.swatch && it.swatch[0]) || "var(--line)") + '" title="No photo yet"></div>') +
           '<div class="info"><span class="name">' + esc(it.name) + '</span>' +
           '<span class="meta">' + [it.size && "Size " + esc(it.size), it.price ? "$" + esc(it.price) : "No price"].filter(Boolean).join(" · ") +
-          (it.sold ? ' <span class="badge sold">Sold</span>' : '') + (!it.depop ? ' <span class="badge nolink">No Depop link</span>' : '') + (!it.image ? ' <span class="badge nolink">No photo</span>' : '') + (it.needs_review ? ' <span class="badge nolink">Needs a name</span>' : '') + '</span>' +
+          (it.sold ? ' <span class="badge sold">Sold</span>' : '') + (!it.depop ? ' <span class="badge nolink">No Depop link</span>' : '') + (!it.image ? ' <span class="badge nolink">No photo</span>' : '') + (it.needs_review ? ' <span class="badge nolink">' + (it.name === "New arrival" ? "Needs a name" : "Needs review") + '</span>' : '') + '</span>' +
           (!it.price && !it.sold ? '<div class="quick"><input type="number" step="0.01" min="0" placeholder="Price $" aria-label="Price for ' + esc(it.name) + '">' +
             '<button class="ghost" type="button" data-act="price">Set price</button></div>' : '') +
           '<div class="actions">' +
@@ -500,7 +500,11 @@ a { color: inherit; }
       var val = btn.previousElementSibling.value.trim();
       if (!(Number(val) > 0)) { btn.previousElementSibling.focus(); return; }
       btn.disabled = true;
-      updateProducts(function (items) { items.forEach(function (it) { if (it.id === id) it.price = Number(val).toFixed(2); }); },
+      updateProducts(function (items) { items.forEach(function (it) {
+        if (it.id !== id) return;
+        it.price = Number(val).toFixed(2);
+        if (it.name !== "New arrival") delete it.needs_review;
+      }); },
         "Set price for " + ((rackCache[id] || {}).name || id))
         .then(function () {
           // Keep the list where it is so the next item is right there; just confirm this one.

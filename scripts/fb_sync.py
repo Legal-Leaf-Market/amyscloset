@@ -278,6 +278,22 @@ def find_match(items, label, posted):
     return best if best_score >= 0.62 else None
 
 
+def clean_price(text):
+    """'$5.99', '5.99 USD' or '5' -> '5.99' / '5.00'; '' when there's no number."""
+    m = re.search(r"\d+(?:\.\d{1,2})?", text or "")
+    return f"{float(m.group(0)):.2f}" if m else ""
+
+
+def fill_blanks(item, label):
+    """Fill a blank size or price from Claude's read of the tag. A priced, named item no longer needs review."""
+    if not item.get("size") and label.get("size"):
+        item["size"] = label["size"]
+    if not item.get("price") and clean_price(label.get("price")):
+        item["price"] = clean_price(label.get("price"))
+    if item.get("price") and item.get("name") != "New arrival":
+        item.pop("needs_review", None)
+
+
 def main():
     if not TOKEN and not os.environ.get("FIXTURE"):
         sys.exit("FB_PAGE_TOKEN is not set. Add it as a repository secret (see SETUP.md).")
@@ -287,7 +303,9 @@ def main():
         client = anthropic.Anthropic()
 
     items = json.load(open(PRODUCTS))
-    known = {it.get("fb_photo_id") for it in items if it.get("fb_photo_id")}
+    # Items already tied to a Facebook photo. Ones still without an image (e.g. added by hand from the
+    # photo's details) get the photo downloaded and attached instead of being skipped.
+    by_photo = {it["fb_photo_id"]: it for it in items if it.get("fb_photo_id")}
     added = attached = 0
 
     for post, ids in fetch_posts():
@@ -295,14 +313,29 @@ def main():
         posted = post.get("created_time", "")[:10]
         size_hint, dept_hint = guess_from_caption(caption)
         for pid in ids:
-            if pid in known:
+            existing = by_photo.get(pid)
+            if existing and existing.get("image"):
                 continue
             raw = download_photo(pid)
             if not raw:
                 print(f"  couldn't download photo {pid}; will retry next run")
                 continue
-            item_id = f"fbp-{pid}"
+            item_id = existing["id"] if existing else f"fbp-{pid}"
             rel, jpeg = save_photo(raw, item_id)
+            if existing:
+                existing["image"] = rel
+                existing.setdefault("fb_post", post.get("permalink_url", ""))
+                # Only ask Claude when there's a blank it could fill from the hang tag.
+                if client and not (existing.get("size") and existing.get("price")):
+                    try:
+                        label = label_with_claude(client, jpeg, caption) or {}
+                    except Exception as e:
+                        print(f"  labeling failed for {pid}: {e}")
+                        label = {}
+                    fill_blanks(existing, label)
+                attached += 1
+                print(f"  photo attached to {existing['id']}: {existing['name']}")
+                continue
             label = None
             if client:
                 try:
@@ -315,15 +348,13 @@ def main():
             match = find_match(items, label, posted) if label["name"] != "New arrival" else None
             if match:
                 match.update({"image": rel, "fb_photo_id": pid, "fb_post": post.get("permalink_url", "")})
-                for k in ("size", "price"):
-                    if not match.get(k) and label.get(k):
-                        match[k] = label[k]
+                fill_blanks(match, label)
                 attached += 1
                 print(f"  photo attached to existing item: {match['name']}")
             else:
                 items.append({
                     "id": item_id, "name": label["name"], "size": label["size"] or size_hint,
-                    "price": label["price"], "image": rel, "depop": "", "added": posted, "sold": False,
+                    "price": clean_price(label["price"]), "image": rel, "depop": "", "added": posted, "sold": False,
                     "category": label["category"], "department": label["department"] or dept_hint,
                     "color": label["color"], "description": label["description"], "source": "facebook-sync",
                     "fb_photo_id": pid, "fb_post": post.get("permalink_url", ""),
@@ -331,7 +362,7 @@ def main():
                 })
                 added += 1
                 print(f"  added: {label['name']} ({posted})")
-            known.add(pid)
+            by_photo[pid] = match or items[-1]
 
     sold = check_sold(items)
 
