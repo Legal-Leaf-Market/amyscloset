@@ -1653,6 +1653,7 @@
     "color": "Black",
     "description": "Pull-on knit shorts",
     "source": "facebook",
+    "fb_id": "fb-103",
     "fb_photo_id": "1044934698551511",
     "swatch": [
       "#1f1f22"
@@ -1673,6 +1674,7 @@
     "color": "Mustard/white",
     "description": "Script-logo ringer tee",
     "source": "facebook",
+    "fb_id": "fb-104",
     "fb_photo_id": "1044934628551518",
     "swatch": [
       "#d1a12c",
@@ -1694,9 +1696,10 @@
     "color": "Mauve",
     "description": "Ribbed knit poncho, one size",
     "source": "facebook",
+    "fb_id": "fb-105",
     "fb_photo_id": "1044933605218287",
     "swatch": [
-      "#b78a9c"
+      "#b76e86"
     ],
     "needs_review": true
   },
@@ -1712,12 +1715,14 @@
     "category": "Dresses & Jumpsuits",
     "department": "Women's",
     "color": "Black",
-    "description": "Eyelet midi dress with smocked waist, new with tags (price tag looks like 3.99; please verify)",
+    "description": "Eyelet midi dress with smocked waist, new with tags",
     "source": "facebook",
+    "fb_id": "fb-106",
     "fb_photo_id": "1044932701885044",
     "swatch": [
       "#1f1f22"
-    ]
+    ],
+    "needs_review": true
   },
   {
     "id": "fb-107",
@@ -1733,12 +1738,11 @@
     "color": "Pink/mustard/olive/teal",
     "description": "Wide-stripe tee with button shoulder",
     "source": "facebook",
+    "fb_id": "fb-107",
     "fb_photo_id": "1044931291885185",
     "swatch": [
       "#ec8fb0",
-      "#d1a12c",
-      "#6b6e3a",
-      "#1f8a8a"
+      "#d1a12c"
     ],
     "needs_review": true
   },
@@ -1756,9 +1760,10 @@
     "color": "Lavender",
     "description": "Soft textured-knit hoodie with ribbon tie",
     "source": "facebook",
+    "fb_id": "fb-108",
     "fb_photo_id": "1044931308551850",
     "swatch": [
-      "#c4b3e3"
+      "#a99bc4"
     ]
   },
   {
@@ -1775,9 +1780,10 @@
     "color": "Taupe/black",
     "description": "Pullover with black knit mock neck, cuffs and hem",
     "source": "facebook",
+    "fb_id": "fb-109",
     "fb_photo_id": "1044929488552032",
     "swatch": [
-      "#a39282",
+      "#8b7355",
       "#1f1f22"
     ],
     "needs_review": true
@@ -1796,9 +1802,10 @@
     "color": "Heather purple",
     "description": "Crewneck long-sleeve tee",
     "source": "facebook",
+    "fb_id": "fb-110",
     "fb_photo_id": "1044929448552036",
     "swatch": [
-      "#9a86b8"
+      "#6a4f9b"
     ],
     "needs_review": true
   },
@@ -1816,6 +1823,7 @@
     "color": "Pale pink",
     "description": "Linen-look sleeveless shell",
     "source": "facebook",
+    "fb_id": "fb-111",
     "fb_photo_id": "1044929401885374",
     "swatch": [
       "#f4d4dc"
@@ -1836,6 +1844,7 @@
     "color": "Black",
     "description": "Short-sleeve tee with Coraline moon artwork",
     "source": "facebook",
+    "fb_id": "fb-112",
     "fb_photo_id": "1044929381885376",
     "swatch": [
       "#1f1f22"
@@ -1856,9 +1865,10 @@
     "color": "Coral red",
     "description": "Silky crewneck blouse",
     "source": "facebook",
+    "fb_id": "fb-113",
     "fb_photo_id": "1044929355218712",
     "swatch": [
-      "#e0533f"
+      "#e0505a"
     ],
     "needs_review": true
   },
@@ -1876,9 +1886,10 @@
     "color": "Light blue",
     "description": "Long-sleeve knit top with gathered V-neck",
     "source": "facebook",
+    "fb_id": "fb-114",
     "fb_photo_id": "1044929308552050",
     "swatch": [
-      "#a9c8e8"
+      "#9db8d9"
     ]
   },
   {
@@ -1895,9 +1906,10 @@
     "color": "Chambray blue",
     "description": "Sleeveless denim-look maxi dress",
     "source": "facebook",
+    "fb_id": "fb-115",
     "fb_photo_id": "1044929301885384",
     "swatch": [
-      "#8aa4c8"
+      "#7f9cc0"
     ],
     "needs_review": true
   },
@@ -1915,10 +1927,10 @@
     "color": "Pink/red/teal plaid",
     "description": "Button-up flannel shirt",
     "source": "facebook",
+    "fb_id": "fb-116",
     "fb_photo_id": "1044929258552055",
     "swatch": [
-      "#ec8fb0",
-      "#c0262d",
+      "#e0338a",
       "#1f8a8a"
     ],
     "needs_review": true
@@ -1937,6 +1949,7 @@
     "color": "Black",
     "description": "Midi-length knit skirt with elastic waist",
     "source": "facebook",
+    "fb_id": "fb-117",
     "fb_photo_id": "1044929235218724",
     "swatch": [
       "#1f1f22"
@@ -1957,9 +1970,10 @@
     "color": "Sage/white",
     "description": "Long-sleeve ribbed henley",
     "source": "facebook",
+    "fb_id": "fb-118",
     "fb_photo_id": "1044929188552062",
     "swatch": [
-      "#a3b59a",
+      "#9fb3a0",
       "#f2f1ee"
     ],
     "needs_review": true
@@ -1978,9 +1992,10 @@
     "color": "Heather blue",
     "description": "Short-sleeve polo",
     "source": "facebook",
+    "fb_id": "fb-119",
     "fb_photo_id": "1044929171885397",
     "swatch": [
-      "#7d93b8"
+      "#9eb0c4"
     ],
     "needs_review": true
   },
@@ -1998,9 +2013,10 @@
     "color": "Brown/black",
     "description": "Slim pull-on ankle pants in a small check",
     "source": "facebook",
+    "fb_id": "fb-120",
     "fb_photo_id": "1044929111885403",
     "swatch": [
-      "#7a5233",
+      "#6b5444",
       "#1f1f22"
     ],
     "needs_review": true
@@ -2019,12 +2035,11 @@
     "color": "Pink/navy/tan/cream",
     "description": "Wide-stripe pullover sweater",
     "source": "facebook",
+    "fb_id": "fb-121",
     "fb_photo_id": "1044929095218738",
     "swatch": [
-      "#ec8fb0",
-      "#1f2c4f",
-      "#c9a77c",
-      "#efe6d2"
+      "#f3c6d3",
+      "#1f2c4f"
     ],
     "needs_review": true
   },
@@ -2042,9 +2057,11 @@
     "color": "Navy floral",
     "description": "Long-sleeve V-neck blouse with tie hem",
     "source": "facebook",
+    "fb_id": "fb-122",
     "fb_photo_id": "1044929061885408",
     "swatch": [
-      "#1f2c4f"
+      "#1f2c4f",
+      "#ec8fb0"
     ],
     "needs_review": true
   },
@@ -2062,9 +2079,10 @@
     "color": "Light blue",
     "description": "3/4-sleeve ribbed henley",
     "source": "facebook",
+    "fb_id": "fb-123",
     "fb_photo_id": "1044929031885411",
     "swatch": [
-      "#a9c8e8"
+      "#9db8d9"
     ],
     "needs_review": true
   },
@@ -2082,9 +2100,10 @@
     "color": "Olive",
     "description": "Small-swoosh cropped tee",
     "source": "facebook",
+    "fb_id": "fb-124",
     "fb_photo_id": "1044928751885439",
     "swatch": [
-      "#6b6e3a"
+      "#5f6b3f"
     ],
     "needs_review": true
   },
@@ -2102,9 +2121,10 @@
     "color": "Charcoal",
     "description": "Retro campaign graphic tee",
     "source": "facebook",
+    "fb_id": "fb-125",
     "fb_photo_id": "1044920011886313",
     "swatch": [
-      "#45474d"
+      "#4a4a4d"
     ],
     "needs_review": true
   },
@@ -2122,6 +2142,7 @@
     "color": "Blue",
     "description": "Short-sleeve graphic tee",
     "source": "facebook",
+    "fb_id": "fb-126",
     "fb_photo_id": "1044919971886317",
     "swatch": [
       "#3d6fc0"
@@ -2142,9 +2163,10 @@
     "color": "Blue/mauve paisley",
     "description": "Short-sleeve paisley print top",
     "source": "facebook",
+    "fb_id": "fb-127",
     "fb_photo_id": "1044918728553108",
     "swatch": [
-      "#3d6fc0",
+      "#a9c8e8",
       "#b78a9c"
     ],
     "needs_review": true
@@ -2163,9 +2185,10 @@
     "color": "Blue",
     "description": "Chino-style shorts, waist 32",
     "source": "facebook",
+    "fb_id": "fb-128",
     "fb_photo_id": "1044917675219880",
     "swatch": [
-      "#3d6fc0"
+      "#4f6f95"
     ],
     "needs_review": true
   },
@@ -2183,6 +2206,7 @@
     "color": "Navy",
     "description": "Flat-front shorts with cargo pockets, waist 33",
     "source": "facebook",
+    "fb_id": "fb-129",
     "fb_photo_id": "1044916095220038",
     "swatch": [
       "#1f2c4f"
@@ -2203,9 +2227,10 @@
     "color": "Blue camo/cream",
     "description": "All-terrain clogs with heel strap, size 10",
     "source": "facebook",
+    "fb_id": "fb-099",
     "fb_photo_id": "1045847138460267",
     "swatch": [
-      "#5b7aa6",
+      "#6f8fa8",
       "#efe6d2"
     ]
   },
@@ -2223,9 +2248,10 @@
     "color": "Gray/teal",
     "description": "Lace-up trail shoes, size 6",
     "source": "facebook",
+    "fb_id": "fb-100",
     "fb_photo_id": "1045812441797070",
     "swatch": [
-      "#8d8f94",
+      "#6f7073",
       "#1f8a8a"
     ]
   },
@@ -2243,6 +2269,7 @@
     "color": "Cream/rainbow",
     "description": "Knit sneakers with rainbow heel tabs and sole, size 6 1/2",
     "source": "facebook",
+    "fb_id": "fb-101",
     "fb_photo_id": "1045812425130405",
     "swatch": [
       "#efe6d2",
@@ -2263,9 +2290,10 @@
     "color": "Tan/teal",
     "description": "Suede lace-ups with teal accents, size 6",
     "source": "facebook",
+    "fb_id": "fb-102",
     "fb_photo_id": "1045812368463744",
     "swatch": [
-      "#c9a77c",
+      "#b59a74",
       "#1f8a8a"
     ]
   },
@@ -2283,9 +2311,10 @@
     "color": "Gray",
     "description": "Knit-upper running sneakers, size 11 1/2",
     "source": "facebook",
+    "fb_id": "fb-089",
     "fb_photo_id": "1047618704949777",
     "swatch": [
-      "#8d8f94"
+      "#6f7073"
     ]
   },
   {
@@ -2302,10 +2331,11 @@
     "color": "Black/gray",
     "description": "Brooks running sneakers, size 9 1/2",
     "source": "facebook",
+    "fb_id": "fb-090",
     "fb_photo_id": "1047618681616446",
     "swatch": [
       "#1f1f22",
-      "#8d8f94"
+      "#a9b4bd"
     ]
   },
   {
@@ -2322,9 +2352,10 @@
     "color": "Khaki",
     "description": "Canvas boat shoes, size 10",
     "source": "facebook",
+    "fb_id": "fb-091",
     "fb_photo_id": "1047618631616451",
     "swatch": [
-      "#c3b091"
+      "#c2b28f"
     ]
   },
   {
@@ -2341,11 +2372,11 @@
     "color": "Cream/blush/silver",
     "description": "Low-tops with black star, snakeskin panels and blush suede toe, size 9 1/2",
     "source": "facebook",
+    "fb_id": "fb-092",
     "fb_photo_id": "1047618618283119",
     "swatch": [
       "#efe6d2",
-      "#e8b4ad",
-      "#c0c2c6"
+      "#d7a3a8"
     ]
   },
   {
@@ -2362,9 +2393,10 @@
     "color": "Cognac",
     "description": "Flat strappy slide sandals, size 10",
     "source": "facebook",
+    "fb_id": "fb-093",
     "fb_photo_id": "1047618551616459",
     "swatch": [
-      "#9a4f24"
+      "#a0602f"
     ]
   },
   {
@@ -2381,10 +2413,11 @@
     "color": "Gray/purple",
     "description": "Mesh running sneakers with coral laces, size 9 1/2",
     "source": "facebook",
+    "fb_id": "fb-094",
     "fb_photo_id": "1047618534949794",
     "swatch": [
-      "#8d8f94",
-      "#7a4fb3"
+      "#a6a6a8",
+      "#8e5bb5"
     ]
   },
   {
@@ -2401,10 +2434,11 @@
     "color": "Gray/pink",
     "description": "GEL running sneakers, size 9 1/2",
     "source": "facebook",
+    "fb_id": "fb-095",
     "fb_photo_id": "1047618444949803",
     "swatch": [
       "#8d8f94",
-      "#ec8fb0"
+      "#f3c6d3"
     ]
   },
   {
@@ -2421,6 +2455,7 @@
     "color": "Black",
     "description": "Low block-heel dress sandals, kids size 1 1/2",
     "source": "facebook",
+    "fb_id": "fb-096",
     "fb_photo_id": "1047559934955654",
     "swatch": [
       "#1f1f22"
@@ -2440,11 +2475,11 @@
     "color": "Cream/red/green",
     "description": "2-piece family sleep set, new with tags (retail $25)",
     "source": "facebook",
+    "fb_id": "fb-097",
     "fb_photo_id": "1047559891622325",
     "swatch": [
       "#efe6d2",
-      "#c0262d",
-      "#2f7a45"
+      "#c0262d"
     ]
   },
   {
@@ -2461,9 +2496,10 @@
     "color": "Pink/orange",
     "description": "\"I put a spell on you\" and jack-o'-lantern crew socks",
     "source": "facebook",
+    "fb_id": "fb-098",
     "fb_photo_id": "1047559878288993",
     "swatch": [
-      "#ec8fb0",
+      "#f3c6d3",
       "#ef7d22"
     ],
     "needs_review": true
@@ -2482,6 +2518,7 @@
     "color": "Gray",
     "description": "Long open-front knit cardigan with shawl collar",
     "source": "facebook",
+    "fb_id": "fb-086",
     "fb_photo_id": "1048690831509231",
     "swatch": [
       "#8d8f94"
@@ -2502,9 +2539,10 @@
     "color": "Light blue-gray",
     "description": "Chunky loose-knit open-front cardigan with patch pockets",
     "source": "facebook",
+    "fb_id": "fb-087",
     "fb_photo_id": "1048690774842570",
     "swatch": [
-      "#a3b4c4"
+      "#a9bccb"
     ],
     "needs_review": true
   },
@@ -2522,6 +2560,7 @@
     "color": "Black",
     "description": "Knit hooded poncho with fringe hem",
     "source": "facebook",
+    "fb_id": "fb-088",
     "fb_photo_id": "1048690751509239",
     "swatch": [
       "#1f1f22"
