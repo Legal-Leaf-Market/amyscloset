@@ -7,6 +7,8 @@ Outputs:
   items/<id>.html          one page per item: photo, price, size, buy button, Open Graph + schema.org tags
   feeds/meta-catalog.csv   Meta catalog data feed (Commerce Manager > Catalog > Data sources > scheduled feed)
   checkout.html            target for Meta's "checkout URL"; shows the order, or forwards a single item to its page
+  sitemap.xml              home page plus every item page still listed, for Google Search Console
+  share.jpg                1200x630 link-preview image (og:image on the home page) from in-stock photos
 
 Sold items stay in the feed as "out of stock" for 30 days after they sell, then drop out.
 sold.json (optional) is a list of item ids to treat as sold without editing products.json.
@@ -22,7 +24,7 @@ import re
 import sys
 from datetime import date, timedelta
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE_URL = os.environ.get("SITE_URL", "https://legal-leaf-market.github.io/amyscloset/").rstrip("/") + "/"
@@ -428,6 +430,40 @@ def checkout_page(items):
             .replace("__FACEBOOK__", js(FACEBOOK)))
 
 
+def sitemap(items):
+    urls = [(SITE_URL, max((it.get("added", "") for it in items), default=""))]
+    for it in items:
+        if not sold_expired(it):
+            urls.append((f"{SITE_URL}items/{it['id']}.html", it.get("sold_at") or it.get("added", "")))
+    rows = "".join(f"  <url><loc>{html.escape(u)}</loc>" + (f"<lastmod>{d[:10]}</lastmod>" if d else "") + "</url>\n"
+                   for u, d in urls)
+    return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{rows}</urlset>\n'
+
+
+def share_image(items, path):
+    """Newest in-stock photos side by side over a navy band with the shop name."""
+    W, H, BAND = 1200, 630, 150
+    photos = [it["image"] for it in reversed(items)
+              if it.get("image") and not it.get("sold") and os.path.exists(os.path.join(ROOT, it["image"]))][:4]
+    im = Image.new("RGB", (W, H), "#f4f5f7")
+    if photos:
+        w = W // len(photos)
+        for i, rel in enumerate(photos):
+            tile = ImageOps.fit(Image.open(os.path.join(ROOT, rel)).convert("RGB"), (w, H - BAND), centering=(0.5, 0.4))
+            im.paste(tile, (i * w, 0))
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, H - BAND, W, H], fill="#1d2740")
+    d.rectangle([0, H - BAND, W, H - BAND + 6], fill="#c9881c")
+    try:
+        big, small = ImageFont.load_default(size=58), ImageFont.load_default(size=28)
+    except TypeError:  # Pillow without FreeType sizes
+        big = small = ImageFont.load_default()
+    d.text((48, H - BAND + 26), "Amy's Closet", font=big, fill="#ffffff")
+    d.text((48, H - BAND + 96), "Thrift in Columbus, IN · 10% of every sale feeds Love Chapel's pantry",
+           font=small, fill="#d9dde6")
+    im.save(path, quality=85, optimize=True, progressive=True)
+
+
 def main():
     items = load_items()
     os.makedirs(os.path.join(ROOT, "items"), exist_ok=True)
@@ -438,6 +474,9 @@ def main():
             f.write(item_page(it))
     with open(os.path.join(ROOT, "checkout.html"), "w") as f:
         f.write(checkout_page(items))
+    with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
+        f.write(sitemap(items))
+    share_image(items, os.path.join(ROOT, "share.jpg"))
 
     rows, skipped = [], {}
     for it in items:

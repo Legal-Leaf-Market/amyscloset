@@ -111,7 +111,18 @@ with its shop item, so people can tap the post and buy. A brand-new item usually
 the catalog reads the feed hourly, and Meta reviews each item. Those posts go up untagged, and the item
 gets a **Tag on Instagram** button on the rack. Tap it an hour or two later to add the tag to the post.
 
-## 6. Things to confirm before launch
+## 6. Google search and link previews
+Every deploy also writes `sitemap.xml`, which lists the home page and each item page, and `share.jpg`, the preview
+picture that shows when the site link is shared in a text, on Facebook or from the Instagram bio. It's made from
+the newest in-stock photos, so it refreshes on its own.
+
+To get the item pages into Google (free, once):
+1. Go to search.google.com/search-console, then **Add property**, then **URL prefix**, and enter
+   `https://legal-leaf-market.github.io/amyscloset/`.
+2. Verify with the **HTML tag** method: send the `<meta name="google-site-verification" ...>` line and it gets added to the home page.
+3. Open **Sitemaps** and submit `sitemap.xml`.
+
+## 7. Things to confirm before launch
 - The drop-off location and hours. The site currently says "message us on Facebook."
 - Sizes and prices for the Ghost Face sweatshirt and the Diamondback tee. Use Lister, then Remove, then re-add, or edit `products.json`.
 - That Love Chapel is fine with being named. They list their phone as 812-372-9421.
