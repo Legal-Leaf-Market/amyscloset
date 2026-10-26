@@ -295,8 +295,18 @@ def fill_blanks(item, label):
 
 
 def main():
-    if not TOKEN and not os.environ.get("FIXTURE"):
-        sys.exit("FB_PAGE_TOKEN is not set. Add it as a repository secret (see SETUP.md).")
+    if not TOKEN.startswith("EAA") and not os.environ.get("FIXTURE"):
+        msg = (describe_token() + " Make a new Page access token (SETUP.md section 3C, step 4), copy only the long "
+               "value that starts with EAA, and paste it as the FB_PAGE_TOKEN repository secret.")
+        if os.environ.get("GITHUB_EVENT_NAME") == "schedule":
+            # Every half-hour run would fail the same way (and email about it); skip with a warning instead.
+            # Run the workflow by hand to see it fail outright.
+            print(f"::warning title=Facebook sync skipped::{msg}")
+            if os.environ.get("GITHUB_STEP_SUMMARY"):
+                with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+                    f.write(f"### Facebook sync skipped\n{msg}\n")
+            return
+        fail(msg)
     client = None
     if os.environ.get("ANTHROPIC_API_KEY"):
         import anthropic
