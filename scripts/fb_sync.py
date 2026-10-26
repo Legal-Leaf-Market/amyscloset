@@ -31,8 +31,36 @@ PRODUCTS = os.path.join(ROOT, "products.json")
 IMG_DIR = os.path.join(ROOT, "images", "products")
 GRAPH = "https://graph.facebook.com/v23.0"
 PAGE_ID = os.environ.get("FB_PAGE_ID", "100091049706849")
-# Tolerate stray spaces, newlines or quotes pasted along with the secret.
-TOKEN = os.environ.get("FB_PAGE_TOKEN", "").strip().strip('"').strip("'").strip()
+RAW_TOKEN = os.environ.get("FB_PAGE_TOKEN", "")
+# Meta access tokens start with "EAA" and are letters and digits only. Pull one out of whatever was pasted
+# (a whole JSON response, "access_token=...", a label, quotes, or line breaks from copying); otherwise use it trimmed.
+_found = re.search(r"EAA[A-Za-z0-9]{20,}", re.sub(r"\s+", "", RAW_TOKEN))
+TOKEN = _found.group(0) if _found else RAW_TOKEN.strip().strip('"').strip("'").strip()
+
+
+def describe_token():
+    """Say what's wrong with the saved secret without printing it."""
+    t = RAW_TOKEN.strip()
+    if not t:
+        return "The FB_PAGE_TOKEN secret is empty."
+    if TOKEN.startswith("EAA"):
+        return (f"The FB_PAGE_TOKEN secret holds a {len(TOKEN)}-character token that starts with EAA, but Facebook "
+                "rejected it. It was probably cut off when copied, or it has expired.")
+    hints = []
+    if re.search(r"\s", t):
+        hints.append("it contains spaces or line breaks")
+    if t.startswith("{"):
+        hints.append("it looks like a JSON response with no access_token in it")
+    if not hints:
+        hints.append("it isn't an access token (those start with EAA)")
+    return f"The FB_PAGE_TOKEN secret is {len(t)} characters and " + " and ".join(hints) + "."
+
+
+def fail(msg):
+    if os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+            f.write(f"### Facebook sync stopped\n{msg}\n")
+    sys.exit(msg)
 DAYS = int(os.environ.get("SYNC_DAYS", "45"))
 
 CATEGORIES = ["Tops", "Bottoms", "Dresses & Jumpsuits", "Outerwear", "Sleepwear", "Scrubs",
@@ -50,7 +78,11 @@ def graph_get(path, **params):
         # Show Facebook's own explanation (bad token, wrong Page ID, missing permission...).
         body = e.read().decode("utf-8", "replace")
         where = "next page" if path.startswith("http") else path
-        sys.exit(f"Facebook API error {e.code} on {where}: {body}")
+        msg = f"Facebook API error {e.code} on {where}: {body}"
+        if '"code":190' in body.replace(" ", ""):
+            msg += ("\n" + describe_token() + " Make a new Page access token (SETUP.md section 3C, step 4), copy "
+                    "only the long value that starts with EAA, and paste it as the FB_PAGE_TOKEN repository secret.")
+        fail(msg)
 
 
 def graph_try(path, **params):
