@@ -38,7 +38,7 @@ h2 { font-size: 1.35rem; }
 .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 16px; }
 label { display: grid; gap: 6px; font-weight: 600; font-size: 0.95rem; }
 .hint { font-weight: 400; color: var(--ink-soft); font-size: 0.85rem; }
-input[type=text], input[type=url], input[type=password], input[type=number], textarea, select {
+input[type=text], input[type=url], input[type=password], input[type=number], input[type=search], textarea, select {
   width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
 }
 textarea { min-height: 110px; resize: vertical; }
@@ -61,6 +61,8 @@ button:disabled { opacity: 0.5; cursor: wait; }
 .items .name { font-weight: 600; overflow-wrap: anywhere; }
 .items .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font: 400 0.85rem/1.3 var(--mono); color: var(--ink-soft); }
 .items .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.items .quick { display: flex; gap: 6px; align-items: center; }
+.items .quick input { width: 7.5em; padding: 7px 10px; }
 .badge { white-space: nowrap; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; border: 1px solid currentColor; }
 .badge.sold { color: var(--bad); } .badge.nolink { color: var(--thread); }
 details summary { cursor: pointer; font-weight: 600; }
@@ -118,7 +120,17 @@ a { color: inherit; }
       <h2>On the rack</h2>
       <button class="ghost" type="button" id="refresh-btn">Refresh</button>
     </div>
-    <input type="search" id="find" placeholder="Search the rack (name, color, size)…" aria-label="Search the rack">
+    <p class="hint" id="shop-status" hidden></p>
+    <div class="row">
+      <input type="search" id="find" placeholder="Search the rack (name, color, size)…" aria-label="Search the rack">
+      <select id="show" aria-label="Which items to show">
+        <option value="">All items</option>
+        <option value="price">Needs a price</option>
+        <option value="photo">Needs a photo</option>
+        <option value="shop">In the Instagram Shop</option>
+        <option value="sold">Sold</option>
+      </select>
+    </div>
     <input type="file" id="photo-pick" accept="image/*" hidden>
     <ul class="items" id="items"><li class="hint" style="display:block;border:0">Add your GitHub key in Settings to see items.</li></ul>
   </section>
@@ -403,11 +415,25 @@ a { color: inherit; }
     ul.innerHTML = '<li class="hint" style="display:block;border:0">Loading…</li>';
     getProducts().then(function (p) {
       rackCache = {}; p.items.forEach(function (it) { rackCache[it.id] = it; });
-      var q = $("find").value.trim().toLowerCase();
+      var q = $("find").value.trim().toLowerCase(), show = $("show").value;
+      // Same rule as the catalog feed in scripts/build_site.py: an item needs a photo and a price.
+      var inShop = function (it) { return !!(it.image && it.price); };
+      var open = p.items.filter(function (it) { return !it.sold; });
+      var ready = open.filter(inShop).length;
+      $("shop-status").textContent = ready + " of " + open.length + " items on the rack are in the Instagram Shop. " +
+        (ready < open.length ? "The rest need " + [
+          open.filter(function (it) { return !it.price; }).length + " prices",
+          open.filter(function (it) { return !it.image; }).length + " photos"
+        ].join(" and ") + ". Use the filter to find them." : "");
+      $("shop-status").hidden = false;
       var items = p.items.slice().reverse().filter(function (it) {
+        if (show === "price" && (it.sold || it.price)) return false;
+        if (show === "photo" && (it.sold || it.image)) return false;
+        if (show === "shop" && (it.sold || !inShop(it))) return false;
+        if (show === "sold" && !it.sold) return false;
         return !q || [it.name, it.color, it.size, it.category, it.department].join(" ").toLowerCase().indexOf(q) !== -1;
       });
-      if (!items.length) { ul.innerHTML = '<li class="hint" style="display:block;border:0">Nothing listed yet. Add your first item above.</li>'; return; }
+      if (!items.length) { ul.innerHTML = '<li class="hint" style="display:block;border:0">' + (p.items.length ? "Nothing matches." : "Nothing listed yet. Add your first item above.") + '</li>'; return; }
       ul.innerHTML = items.map(function (it) {
         return '<li data-id="' + esc(it.id) + '">' +
           (it.image ? '<img src="' + esc(S.site + it.image) + '" alt="">'
@@ -415,6 +441,8 @@ a { color: inherit; }
           '<div class="info"><span class="name">' + esc(it.name) + '</span>' +
           '<span class="meta">' + [it.size && "Size " + esc(it.size), it.price ? "$" + esc(it.price) : "No price"].filter(Boolean).join(" · ") +
           (it.sold ? ' <span class="badge sold">Sold</span>' : '') + (!it.depop ? ' <span class="badge nolink">No Depop link</span>' : '') + (!it.image ? ' <span class="badge nolink">No photo</span>' : '') + (it.needs_review ? ' <span class="badge nolink">Needs a name</span>' : '') + '</span>' +
+          (!it.price && !it.sold ? '<div class="quick"><input type="number" step="0.01" min="0" placeholder="Price $" aria-label="Price for ' + esc(it.name) + '">' +
+            '<button class="ghost" type="button" data-act="price">Set price</button></div>' : '') +
           '<div class="actions">' +
           '<button class="ghost" type="button" data-act="sold">' + (it.sold ? "Relist" : "Mark sold") + '</button>' +
           '<button class="ghost" type="button" data-act="edit">Edit details</button>' +
@@ -426,6 +454,10 @@ a { color: inherit; }
     }).catch(function (e) { ul.innerHTML = '<li class="hint" style="display:block;border:0">' + esc(e.message) + '</li>'; });
   }
   $("refresh-btn").addEventListener("click", refresh);
+  $("show").addEventListener("change", refresh);
+  $("items").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && e.target.closest(".quick")) { e.preventDefault(); e.target.nextElementSibling.click(); }
+  });
   var findTimer;
   $("find").addEventListener("input", function () { clearTimeout(findTimer); findTimer = setTimeout(refresh, 250); });
   var photoTarget = null;
@@ -462,6 +494,20 @@ a { color: inherit; }
           it.size = size; it.price = price ? Number(price).toFixed(2) : ""; it.depop = url;
         }); }, "Update item: " + (cur.name || id)).then(refresh).catch(function (err) { alertInline(li, err.message); });
       });
+      return;
+    }
+    if (act === "price") {
+      var val = btn.previousElementSibling.value.trim();
+      if (!(Number(val) > 0)) { btn.previousElementSibling.focus(); return; }
+      btn.disabled = true;
+      updateProducts(function (items) { items.forEach(function (it) { if (it.id === id) it.price = Number(val).toFixed(2); }); },
+        "Set price for " + ((rackCache[id] || {}).name || id))
+        .then(function () {
+          // Keep the list where it is so the next item is right there; just confirm this one.
+          btn.parentNode.outerHTML = '<span class="hint" style="color:var(--ok)">Price set: $' + Number(val).toFixed(2) + '</span>';
+          if (rackCache[id]) rackCache[id].price = Number(val).toFixed(2);
+        })
+        .catch(function (err) { btn.disabled = false; alertInline(li, err.message); });
       return;
     }
     if (act === "igtag") {
